@@ -11,4 +11,5 @@ wheels/
 
 
 # Dataset directory
-datasets/
+/datasets/
+/data/
