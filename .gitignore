@@ -13,3 +13,4 @@ wheels/
 # Dataset directory
 /datasets/
 /data/
+/stgcn/data/

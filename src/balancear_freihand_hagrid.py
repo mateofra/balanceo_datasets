@@ -452,6 +452,200 @@ def _write_tone_sets(output_dir: Path, records: list[SampleRecord]) -> None:
                 )
 
 
+def _write_landmark_training_dirs(output_dir: Path, records: list[SampleRecord]) -> None:
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    tone_sets: dict[str, list[SampleRecord]] = {
+        "claro": [r for r in records if r.mst is not None and 1 <= r.mst <= 4],
+        "medio": [r for r in records if r.mst is not None and 5 <= r.mst <= 7],
+        "oscuro": [r for r in records if r.mst is not None and 8 <= r.mst <= 10],
+    }
+
+    for tone_name, tone_records in tone_sets.items():
+        tone_dir = output_dir / tone_name
+        tone_dir.mkdir(parents=True, exist_ok=True)
+
+        manifest_path = tone_dir / "train_manifest.csv"
+        with manifest_path.open("w", encoding="utf-8", newline="") as f:
+            writer = csv.DictWriter(
+                f,
+                fieldnames=["sample_id", "source", "gesture", "mst", "split", "mst_origin"],
+            )
+            writer.writeheader()
+            for record in tone_records:
+                writer.writerow(
+                    {
+                        "sample_id": record.sample_id,
+                        "source": record.source,
+                        "gesture": record.gesture,
+                        "mst": record.mst,
+                        "split": "train",
+                        "mst_origin": record.mst_origin,
+                    }
+                )
+
+        stats = {
+            "tone": tone_name,
+            "total_samples": len(tone_records),
+            "by_source": dict(Counter(r.source for r in tone_records)),
+            "by_gesture": dict(Counter(r.gesture for r in tone_records)),
+            "by_mst_level": dict(sorted(Counter(r.mst for r in tone_records if r.mst is not None).items())),
+        }
+        stats_path = tone_dir / "stats.json"
+        with stats_path.open("w", encoding="utf-8") as f:
+            json.dump(stats, f, ensure_ascii=True, indent=2)
+
+    readme_lines = [
+        "# training_tono",
+        "",
+        "Directorios de entrenamiento por tono para el modelo de landmarks.",
+        "",
+        "## Estructura",
+        "",
+        "- claro/train_manifest.csv y claro/stats.json",
+        "- medio/train_manifest.csv y medio/stats.json",
+        "- oscuro/train_manifest.csv y oscuro/stats.json",
+        "",
+        "Cada manifesto contiene solo split=train y muestras del bloque MST correspondiente.",
+    ]
+    (output_dir / "README.md").write_text("\n".join(readme_lines) + "\n", encoding="utf-8")
+
+
+def _extract_freihand_numeric_id(sample_id: str) -> str:
+    prefix = "freihand_"
+    if sample_id.startswith(prefix):
+        return sample_id[len(prefix):]
+    return sample_id
+
+
+def _mst_to_condition(mst: int | None) -> str:
+    if mst is None:
+        return "sin_mst"
+    if 1 <= mst <= 4:
+        return "claro"
+    if 5 <= mst <= 7:
+        return "medio"
+    return "oscuro"
+
+
+def _build_landmark_path(record: SampleRecord, landmarks_root: Path) -> str:
+    if record.source == "hagrid":
+        return str(landmarks_root / "hagrid" / record.gesture / f"{record.sample_id}.npy")
+
+    freihand_id = _extract_freihand_numeric_id(record.sample_id)
+    return str(landmarks_root / "freihand" / f"{freihand_id}.npy")
+
+
+def _write_stgcn_manifest_csv(
+    output_csv: Path,
+    records: list[SampleRecord],
+    landmarks_root: Path,
+    include_missing_mst: bool,
+) -> None:
+    output_csv.parent.mkdir(parents=True, exist_ok=True)
+    with output_csv.open("w", encoding="utf-8", newline="") as f:
+        writer = csv.DictWriter(
+            f,
+            fieldnames=[
+                "sample_id",
+                "path_landmarks",
+                "label",
+                "condition",
+                "dataset",
+                "mst",
+                "mst_origin",
+                "split",
+            ],
+        )
+        writer.writeheader()
+
+        for record in records:
+            condition = _mst_to_condition(record.mst)
+            if condition == "sin_mst" and not include_missing_mst:
+                continue
+
+            writer.writerow(
+                {
+                    "sample_id": record.sample_id,
+                    "path_landmarks": _build_landmark_path(record, landmarks_root),
+                    "label": record.gesture,
+                    "condition": condition,
+                    "dataset": record.source,
+                    "mst": "" if record.mst is None else record.mst,
+                    "mst_origin": record.mst_origin,
+                    "split": "train",
+                }
+            )
+
+
+def _compute_mst_match_report(
+    freihand_records: list[SampleRecord],
+    hagrid_records: list[SampleRecord],
+    mst_map: dict[str, int],
+) -> dict[str, object]:
+    freihand_keys = [record.sample_id.lower() for record in freihand_records]
+    hagrid_keys = [record.sample_id.lower() for record in hagrid_records]
+
+    freihand_matches = sum(1 for key in freihand_keys if key in mst_map)
+    hagrid_matches = sum(1 for key in hagrid_keys if key in mst_map)
+    total_records = len(freihand_keys) + len(hagrid_keys)
+    total_matches = freihand_matches + hagrid_matches
+
+    def pct(matches: int, total: int) -> float:
+        if total == 0:
+            return 0.0
+        return round((matches / total) * 100.0, 2)
+
+    return {
+        "mst_rows": len(mst_map),
+        "freihand": {
+            "records": len(freihand_keys),
+            "matches": freihand_matches,
+            "match_pct": pct(freihand_matches, len(freihand_keys)),
+        },
+        "hagrid": {
+            "records": len(hagrid_keys),
+            "matches": hagrid_matches,
+            "match_pct": pct(hagrid_matches, len(hagrid_keys)),
+        },
+        "total": {
+            "records": total_records,
+            "matches": total_matches,
+            "match_pct": pct(total_matches, total_records),
+        },
+    }
+
+
+def _print_mst_match_report(report: dict[str, object]) -> None:
+    freihand = report["freihand"]
+    hagrid = report["hagrid"]
+    total = report["total"]
+
+    print("Cobertura de match MST (antes de balancear):")
+    print(f"- filas_unicas_mst_csv: {report['mst_rows']}")
+    print(
+        "- freihand: "
+        f"{freihand['matches']}/{freihand['records']} "
+        f"({freihand['match_pct']}%)"
+    )
+    print(
+        "- hagrid: "
+        f"{hagrid['matches']}/{hagrid['records']} "
+        f"({hagrid['match_pct']}%)"
+    )
+    print(
+        "- total: "
+        f"{total['matches']}/{total['records']} "
+        f"({total['match_pct']}%)"
+    )
+
+    if float(total["match_pct"]) < 20.0:
+        print(
+            "Aviso: cobertura de MST muy baja (<20%). "
+            "El CSV podria ser mock o estar mal alineado con sample_id/image_id."
+        )
+
+
 def _write_summary_json(
     output_json: Path,
     summary: dict[str, object],
@@ -558,6 +752,16 @@ def parse_args() -> argparse.Namespace:
         ),
     )
     parser.add_argument(
+        "--output-landmark-train-dir",
+        type=Path,
+        default=None,
+        help=(
+            "Directorio opcional para exportar datos de entrenamiento del modelo "
+            "de landmarks separados en tres subdirectorios por tono "
+            "(claro/medio/oscuro). Requiere MST disponible."
+        ),
+    )
+    parser.add_argument(
         "--impute-missing-mst",
         action="store_true",
         default=DEFAULT_IMPUTE_MISSING_MST,
@@ -580,6 +784,33 @@ def parse_args() -> argparse.Namespace:
         type=Path,
         default=Path("csv/resumen_balanceo_freihand_hagrid.json"),
         help="Ruta del resumen JSON de salida.",
+    )
+    parser.add_argument(
+        "--output-stgcn-manifest-csv",
+        type=Path,
+        default=None,
+        help=(
+            "Ruta opcional para exportar manifiesto ST-GCN (CSV) con columnas "
+            "sample_id,path_landmarks,label,condition,dataset,mst,mst_origin,split."
+        ),
+    )
+    parser.add_argument(
+        "--landmarks-root-dir",
+        type=Path,
+        default=Path("data/processed/landmarks"),
+        help=(
+            "Directorio base de landmarks preprocesados (.npy). "
+            "Se usa para construir path_landmarks en manifiesto ST-GCN."
+        ),
+    )
+    parser.add_argument(
+        "--include-missing-mst-in-stgcn",
+        action="store_true",
+        default=False,
+        help=(
+            "Incluye filas sin MST en el manifiesto ST-GCN con condition=sin_mst. "
+            "Por defecto se excluyen para mantener claro/medio/oscuro."
+        ),
     )
     return parser.parse_args()
 
@@ -606,7 +837,14 @@ def main() -> None:
     hagrid_records = _load_hagrid_records(args.hagrid_annotations_dir, args.gestures)
 
     if args.mst_csv is not None:
+        if not args.mst_csv.exists():
+            raise FileNotFoundError(
+                f"No existe --mst-csv en la ruta indicada: {args.mst_csv}"
+            )
+
         mst_map = _load_mst_map(args.mst_csv)
+        match_report = _compute_mst_match_report(freihand_records, hagrid_records, mst_map)
+        _print_mst_match_report(match_report)
         freihand_records = _attach_mst(freihand_records, mst_map)
         hagrid_records = _attach_mst(hagrid_records, mst_map)
 
@@ -652,6 +890,23 @@ def main() -> None:
         else:
             _write_tone_sets(args.output_tone_sets_dir, balanced_records)
             print(f"Sets por tono: {args.output_tone_sets_dir}")
+
+    if args.output_landmark_train_dir is not None:
+        has_mst = any(record.mst is not None for record in balanced_records)
+        if not has_mst:
+            print("Aviso: no se exporta entrenamiento de landmarks por tono porque no hay MST.")
+        else:
+            _write_landmark_training_dirs(args.output_landmark_train_dir, balanced_records)
+            print(f"Entrenamiento landmarks por tono: {args.output_landmark_train_dir}")
+
+    if args.output_stgcn_manifest_csv is not None:
+        _write_stgcn_manifest_csv(
+            args.output_stgcn_manifest_csv,
+            balanced_records,
+            landmarks_root=args.landmarks_root_dir,
+            include_missing_mst=args.include_missing_mst_in_stgcn,
+        )
+        print(f"Manifiesto ST-GCN: {args.output_stgcn_manifest_csv}")
 
     print("Balanceo completado.")
     print(f"Manifiesto: {args.output_csv}")

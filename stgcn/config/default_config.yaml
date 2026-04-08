@@ -1,0 +1,25 @@
+# Configuración por Defecto para ST-GCN Training
+
+BATCH_SIZE: 32
+NUM_EPOCHS: 20
+LEARNING_RATE: 0.001
+OPTIMIZER: "adam"
+SCHEDULER: "cosine"
+
+# Model
+MODEL_ARCH: "simple_stgcn"
+HIDDEN_DIM: 64
+DROPOUT: 0.5
+
+# Data
+MANIFEST_CSV: "../output/train_manifest_stgcn_fixed.csv"
+LANDMARKS_ROOT: "../data/processed/landmarks"
+NORMALIZE_LANDMARKS: true
+BALANCE_BY_MST: true
+NUM_WORKERS: 0
+
+# Logging
+OUTPUT_DIR: "./logs"
+LOG_INTERVAL: 50
+SAVE_INTERVAL: 5
+DEVICE: "cpu"

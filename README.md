@@ -1,125 +1,200 @@
-# balanceo_datasets
+# 🎯 balanceo_datasets
 
-Repositorio para construir conjuntos de entrenamiento balanceados entre FreiHAND y HaGRID, con foco en reducir sesgo por distribucion de tonos MST durante entrenamiento.
+Repositorio para construir conjuntos de entrenamiento balanceados entre **FreiHAND** y **HaGRID**, reduciendo sesgos por distribución de tonos **MST** en modelos de reconocimiento de gestos (**ST-GCN**).
 
-## Objetivo
+## 📋 Estructura del Proyecto
 
-- Balancear la mezcla FreiHAND + HaGRID en entrenamiento por cuotas reproducibles.
-- Mantener validacion y test sin rebalance artificial.
-- Permitir activar balance por bloques MST (claro/medio/oscuro) cuando exista CSV de auditoria previa.
+```
+balanceo_datasets/
+├── docs/                    📚 Documentación técnica
+├── src/                     📦 Código fuente modular
+│   ├── balancer/            ⚖️  Balanceo de datasets
+│   ├── preprocessing/       🔄 Preprocesamiento de landmarks
+│   ├── classification/      🎨 Clasificación MST
+│   └── st_gcn_dataloader.py 🔗 DataLoader para ST-GCN
+├── scripts/                 🔧 Scripts ejecutables
+│   ├── diagnosis/           🔍 Diagnóstico y validación
+│   ├── training/            🎓 Entrenamiento y visualización
+│   ├── repair/              🔧 Reparación de datos
+│   └── generate/            📊 Generación de reportes
+├── data/                    💾 Datos procesados
+├── output/                  📤 Manifiestos y reportes
+├── datasets/                📦 Datos de referencia
+├── models/                  🤖 Modelos preentrenados
+├── csv/                     📋 CSVs de datos
+├── graficos/                📈 Visualizaciones
+├── stgcn/                   🕸️  Módulo ST-GCN
+├── tests/                   ✅ Pruebas unitarias
+└── pyproject.toml
+```
 
-## Requisitos
+## 🎯 Objetivos del Proyecto
+
+- ✅ Balancear FreiHAND + HaGRID por cuotas reproducibles
+- ✅ Equilibrar por tono de piel (escala MST 1-10)
+- ✅ Categorización: claro/medio/oscuro
+- ✅ Generar manifiesto listo para ST-GCN
+- ✅ Mantener validación/test sin artificio
+
+## 🚀 Quick Start: Entrenar ST-GCN
+
+### ⚡ En 3 Pasos
+
+**1) Datos disponibles:**
+```
+output/manifests/
+└── train_manifest_stgcn_fixed.csv    # 10K muestras FreiHAND
+
+data/processed/landmarks/
+└── freihand_*.npy                    # 32,560 landmarks (21×3 coords)
+```
+
+**2) Importar DataLoader:**
+```python
+from src.st_gcn_dataloader import create_dataloaders
+
+loaders = create_dataloaders(
+    manifest_csv="output/manifests/train_manifest_stgcn_fixed.csv",
+    batch_size=32,
+    normalize=True,
+    balance_by_mst=True  # ⭐ Balancea por tono de piel
+)
+
+train_loader = loaders["train"]
+
+# Iterar batches
+for batch in train_loader:
+    landmarks = batch["landmarks"]  # (BS, 21, 3)
+    labels = batch["label"]         # Gesture labels
+    mst = batch["mst"]              # Tono MST (1-10)
+    condition = batch["condition"]  # claro/medio/oscuro
+```
+
+**3) Entrenar:**
+```bash
+uv run python src/train_stgcn_example.py
+```
+
+📍 Checkpoints → `output/training_logs/`
+📍 TensorBoard → `tensorboard --logdir=output/training_logs/tensorboard`
+
+---
+
+## 📚 Documentación
+
+| Documento | Propósito |
+|-----------|-----------|
+| [docs/PIPELINE_MST_STGCN.md](docs/PIPELINE_MST_STGCN.md) | Arquitectura end-to-end |
+| [docs/GUIA_TRAINING_STGCN.md](docs/GUIA_TRAINING_STGCN.md) | Guía de entrenamiento |
+| [src/README.md](src/README.md) | Referencia de código |
+| [scripts/README.md](scripts/README.md) | Scripts disponibles |
+
+## 📊 Dataset Balanceado - Estado Actual
+
+| Métrica | Valor |
+|---------|-------|
+| **Total samples** | 20,000 |
+| **FreiHAND** | 10,000 (50%) ✅ |
+| **HaGRID** | 10,000 (50%) ⏳ |
+| **Balanceo MST** | Claro/Medio/Oscuro ≈ 33% c/u |
+| **Oversampling** | MST extremos (1,2,3,10) |
+
+## 🔧 Requisitos
 
 - Python 3.13+
-- uv
+- `uv`
 
-Instalacion:
-
-```powershell
+**Instalación:**
+```bash
 uv sync
 ```
 
-## Balanceo FreiHAND + HaGRID
+---
 
-Script principal: [src/balancear_freihand_hagrid.py](src/balancear_freihand_hagrid.py)
+## ⚖️ Balanceador: FreiHAND + HaGRID
 
-Entrenamiento balanceado por fuente (50/50):
+**Ubicación:** [`src/balancer/balancear_freihand_hagrid.py`](src/balancer/README.md)
 
-```powershell
-uv run python src/balancear_freihand_hagrid.py \
-	--freihand-training-xyz datasets/training_xyz.json \
-	--hagrid-annotations-dir datasets/ann_subsample \
-	--target-size 20000 \
-	--hagrid-ratio 0.5 \
-	--extreme-mst-levels 1 2 3 10 \
-	--extreme-factor 2.0 \
-	--seed 42 \
-	--output-csv csv/train_manifest_balanceado_freihand_hagrid.csv \
-	--output-summary csv/resumen_balanceo_freihand_hagrid.json
+### Uso Básico
+
+Balanceo simple 50/50:
+```bash
+uv run python src/balancer/balancear_freihand_hagrid.py \
+  --freihand-training-xyz datasets/training_xyz.json \
+  --hagrid-annotations-dir datasets/ann_subsample \
+  --target-size 20000 \
+  --hagrid-ratio 0.5 \
+  --extreme-mst-levels 1 2 3 10 \
+  --extreme-factor 2.0 \
+  --seed 42 \
+  --output-csv output/manifests/train_manifest_balanceado.csv \
+  --output-summary output/reports/resumen_balanceo.json
 ```
 
-Con MST de auditoria previa (si ya tienes un CSV con `sample_id`/`image_id` + `mst`):
+### Con Auditoria MST
 
-```powershell
-uv run python src/balancear_freihand_hagrid.py \
-	--freihand-training-xyz datasets/training_xyz.json \
-	--hagrid-annotations-dir datasets/ann_subsample \
-	--mst-csv csv/auditoria_mst.csv \
-	--target-size 20000 \
-	--hagrid-ratio 0.5 \
-	--extreme-mst-levels 1 2 3 10 \
-	--extreme-factor 2.0 \
-	--dark-jitter-factor 0.5 \
-	--output-tone-sets-dir csv/sets_tonos_train \
-	--seed 42
+Si tienes CSV con auditoría de tonos:
+```bash
+uv run python src/balancer/balancear_freihand_hagrid.py \
+  --freihand-training-xyz datasets/training_xyz.json \
+  --hagrid-annotations-dir datasets/ann_subsample \
+  --mst-csv csv/auditoria_mst.csv \
+  --target-size 20000 \
+  --hagrid-ratio 0.5 \
+  --seed 42 \
+  --output-tone-sets-dir csv/sets_tonos_train
 ```
 
-Cuando se provee `--mst-csv`, el script intenta distribuir entrenamiento por bloques:
+Genera:
+- `csv/sets_tonos_train/train_set_claro.csv`
+- `csv/sets_tonos_train/train_set_medio.csv`
+- `csv/sets_tonos_train/train_set_oscuro.csv`
 
-- claro: MST 1-4
-- medio: MST 5-7
-- oscuro: MST 8-10
+### Para ST-GCN
 
-Para asegurar clasificacion completa, por defecto el script imputa MST faltante y elimina el bloque `sin_mst`:
-
-- `--impute-missing-mst` (por defecto activado)
-- `--no-impute-missing-mst` (si quieres desactivarlo)
-
-Ademas, si hay MST disponible, aplica oversampling por peso para niveles extremos configurables con:
-
-- `--extreme-mst-levels` (por defecto 1 2 3 10)
-- `--extreme-factor` (por defecto 2.0)
-
-Y opcion de augmentacion cromatica controlada (representada como replicacion virtual de candidatos MST 8-9):
-
-- `--dark-jitter-factor` (por defecto 0.0, desactivado)
-
-Si indicas `--output-tone-sets-dir` y existe MST, exporta 3 sets de entrenamiento:
-
-- `train_set_claro.csv` (MST 1-4)
-- `train_set_medio.csv` (MST 5-7)
-- `train_set_oscuro.csv` (MST 8-10)
-
-## Salidas
-
-- `csv/train_manifest_balanceado_freihand_hagrid.csv`: manifiesto de entrenamiento balanceado.
-- `csv/resumen_balanceo_freihand_hagrid.json`: resumen de composicion por fuente, gesto y bloque MST.
-- `csv/sets_tonos_train/*.csv`: sets por tono (si activas `--output-tone-sets-dir` y hay MST).
-
-El manifiesto incluye columnas extra de trazabilidad:
-
-- `sampling_weight`: peso usado por regla de oversampling MST extremo.
-- `augmentation_hint`: marca `color_jitter_dark_candidate` para muestras MST 8-9.
-- `mst_origin`: `original` o `imputed`, para distinguir etiquetas de auditoria vs imputacion.
-
-## Pruebas
-
-```powershell
-uv run python -m unittest discover -s tests
+Manifiesto único con rutas a `.npy`:
+```bash
+uv run python src/balancer/balancear_freihand_hagrid.py \
+  --freihand-training-xyz datasets/training_xyz.json \
+  --hagrid-annotations-dir datasets/ann_subsample \
+  --mst-csv csv/auditoria_mst.csv \
+  --target-size 20000 \
+  --hagrid-ratio 0.5 \
+  --landmarks-root-dir data/processed/landmarks \
+  --output-stgcn-manifest-csv output/manifests/train_manifest_stgcn.csv \
+  --seed 42
 ```
 
-## Graficos de validacion del balanceo
+### Columnas del Manifiesto ST-GCN
 
-Generar graficos a partir del manifiesto y resumen:
+| Columna | Descripción |
+|---------|-------------|
+| `sample_id` | ID único |
+| `path_landmarks` | Ruta a `.npy` |
+| `label` | Gesto (o `unknown` para FreiHAND) |
+| `condition` | claro/medio/oscuro |
+| `dataset` | freihand o hagrid |
+| `mst` | Nivel MST (1-10) |
+| `mst_origin` | original o imputed |
+| `split` | train |
+| `sampling_weight` | Peso de oversampling |
+| `augmentation_hint` | Marcas de augmentación |
 
-```powershell
-uv run python src/generar_graficos_balanceo.py \
-	--manifest-csv csv/train_manifest_balanceado_freihand_hagrid_smoke2.csv \
-	--summary-json csv/resumen_balanceo_freihand_hagrid_smoke2.json \
-	--output-dir graficos/balanceo_smoke2
+---
+
+## 📊 Generar Gráficos
+
+**Ubicación:** [`scripts/generate/generar_graficos_balanceo.py`](scripts/generate/README.md)
+
+```bash
+uv run python scripts/generate/generar_graficos_balanceo.py \
+  --manifest-csv csv/train_manifest_balanceado_freihand_hagrid.csv \
+  --summary-json output/reports/resumen_balanceo.json \
+  --output-dir output/graphics
 ```
 
-Se generan PNG para:
-
-- composicion por fuente
-- composicion por bloques MST
-- niveles MST (si hay dato)
-- top de gestos
-
-Tambien se genera un reporte en `reporte_graficos_balanceo.md` con conteos de respaldo.
-
-## Nota sobre MST
-
-En los JSON crudos actuales de FreiHAND/HaGRID no aparece un campo MST explicito. Por eso el balance por bloques MST depende de un CSV externo de auditoria previa.
-
-Si faltan etiquetas para algunos objetos, el pipeline las imputa en entrenamiento para que todos queden clasificados en claro/medio/oscuro.
+**Salida:**
+- Composición por fuente (FreiHAND vs HaGRID)
+- Distribución MST (claro/medio/oscuro)
+- Histogramas de gestos
+- Reporte: `output/graphics/reporte_graficos_balanceo.md`
