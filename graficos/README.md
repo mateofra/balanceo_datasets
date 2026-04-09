@@ -6,6 +6,7 @@ Carpeta para salidas visuales del proyecto, separadas por objetivo.
 
 - `balanceo_tonos_demo/` y variantes: composicion de los datasets balanceados.
 - `auditoria_dpr/`: resumen visual de accuracy por bloque MST y TVD canónico.
+- `stgcn_atencion_mst/`: una imagen por tono MST (claro/medio/oscuro) con esqueleto y brillo por atencion de nodos.
 
 ## Uso
 
@@ -22,6 +23,12 @@ Grafica de auditoria:
 
 ```powershell
 uv run python scripts/generate/generar_grafica_auditoria_dpr.py
+```
+
+Visualizacion de atencion ST-GCN:
+
+```powershell
+uv run python scripts/generate/visualizar_atencion_stgcn_mst.py
 ```
 
 ## Lo que validan

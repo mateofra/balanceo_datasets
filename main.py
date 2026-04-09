@@ -47,6 +47,44 @@ def run_auditoria(sin_grafica: bool) -> int:
     return 0
 
 
+def run_setup_data(
+    *,
+    download_hagrid: bool,
+    execute_download: bool,
+    prepare_ann_subsample: bool,
+    strict_download: bool,
+) -> int:
+    """Bootstrap local data directories, optionally run HaGRID download assistant, then verify."""
+    bootstrap_code = run_script("scripts/setup/bootstrap_local_data.py", [])
+    if bootstrap_code not in (0, 2):
+        return bootstrap_code
+
+    download_code = 0
+    download_fatal = False
+    if download_hagrid:
+        download_args: list[str] = []
+        if execute_download:
+            download_args.append("--execute")
+        if prepare_ann_subsample:
+            download_args.append("--prepare-ann-subsample")
+        download_code = run_script("scripts/setup/download_hagrid_kaggle.py", download_args)
+        if download_code != 0 and execute_download and strict_download:
+            download_fatal = True
+
+    verify_code = run_script("scripts/setup/bootstrap_local_data.py", ["--verify-only"])
+    print("\n=== Resumen setup-data ===")
+    print(f"bootstrap: code={bootstrap_code}")
+    print(f"download_hagrid: {'si' if download_hagrid else 'no'} (code={download_code})")
+    print(f"strict_download: {'si' if strict_download else 'no'}")
+    print(f"verify: code={verify_code}")
+    if download_fatal:
+        print("resultado: fallo en descarga real de HaGRID")
+        return download_code
+    if download_code != 0 and execute_download and not strict_download:
+        print("resultado: descarga real falló, pero se continúa por --strict-download desactivado")
+    return verify_code
+
+
 def print_pipeline_summary(
     *,
     modo: str,
@@ -143,6 +181,34 @@ def build_parser() -> argparse.ArgumentParser:
         help="Si se activa, omite entrenamiento y ejecuta solo auditoría",
     )
 
+    parser_setup_data = subparsers.add_parser(
+        "setup-data",
+        help="Bootstrap de datos locales y verificación; opcionalmente descarga asistida de HaGRID",
+    )
+    parser_setup_data.add_argument(
+        "--download-hagrid",
+        action="store_true",
+        help="Ejecuta el asistente de descarga de HaGRID (Kaggle CLI)",
+    )
+    parser_setup_data.add_argument(
+        "--execute-download",
+        action="store_true",
+        help="Si se usa con --download-hagrid, ejecuta descarga real (sin esto, dry-run)",
+    )
+    parser_setup_data.add_argument(
+        "--prepare-ann-subsample",
+        action="store_true",
+        help="Si se usa con --download-hagrid, prepara datasets/ann_subsample",
+    )
+    parser_setup_data.add_argument(
+        "--strict-download",
+        action="store_true",
+        help=(
+            "Si se usa con --execute-download, un fallo de descarga hace fallar setup-data; "
+            "si no se activa, setup-data continúa con verify"
+        ),
+    )
+
     subparsers.add_parser(
         "test-forward",
         help="Ejecuta el test rápido de forward del modelo",
@@ -182,6 +248,14 @@ def main() -> int:
             auditoria_code=auditoria_code,
         )
         return 0
+
+    if args.command == "setup-data":
+        return run_setup_data(
+            download_hagrid=args.download_hagrid,
+            execute_download=args.execute_download,
+            prepare_ann_subsample=args.prepare_ann_subsample,
+            strict_download=args.strict_download,
+        )
 
     if args.command == "test-forward":
         return run_script("scripts/training/test_forward.py", [])

@@ -78,6 +78,18 @@ uv add kaggle
 uv run kaggle datasets download -d kapitanov/hagrid -p datasets --unzip
 ```
 
+Alternativa asistida desde este repo (dry-run por defecto):
+
+```powershell
+uv run python scripts/setup/download_hagrid_kaggle.py
+```
+
+Ejecución real con preparación de anotaciones para el pipeline actual:
+
+```powershell
+uv run python scripts/setup/download_hagrid_kaggle.py --execute --prepare-ann-subsample
+```
+
 4. Reubica el contenido para que coincida con las rutas del proyecto:
 	- JSON de anotaciones en [datasets/hagrid_annotations/train/](datasets/hagrid_annotations/train/)
 	- Imágenes por gesto en [datasets/hagrid_dataset/](datasets/hagrid_dataset/)

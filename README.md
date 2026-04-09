@@ -86,6 +86,7 @@ uv run python src/stgcn/train_stgcn_example.py
 |-----------|-----------|
 | [docs/PIPELINE_MST_STGCN.md](docs/PIPELINE_MST_STGCN.md) | Arquitectura end-to-end |
 | [docs/GUIA_TRAINING_STGCN.md](docs/GUIA_TRAINING_STGCN.md) | Guía de entrenamiento |
+| [docs/RECREAR_DATASETS_EN_CLON.md](docs/RECREAR_DATASETS_EN_CLON.md) | Como recrear directorios ignorados y preparar datasets en un clon nuevo |
 | [src/README.md](src/README.md) | Referencia de código |
 | [scripts/README.md](scripts/README.md) | Scripts disponibles |
 
@@ -194,6 +195,19 @@ uv run python main.py pipeline --modo supervisado --epochs 30
 uv run python main.py pipeline --skip-train
 
 # Nota: pipeline imprime un resumen final con estado y rutas de artefactos
+
+# Setup de datos locales (crear estructura ignorada + verificar)
+uv run python main.py setup-data
+
+# Setup de datos + asistente HaGRID en dry-run
+uv run python main.py setup-data --download-hagrid
+# Nota: en dry-run no falla si falta Kaggle CLI; solo informa y sigue con verify.
+
+# Setup de datos + descarga real de HaGRID + preparar ann_subsample
+uv run python main.py setup-data --download-hagrid --execute-download --prepare-ann-subsample
+
+# Forzar que setup-data falle si la descarga real falla
+uv run python main.py setup-data --download-hagrid --execute-download --strict-download
 
 # Test rapido de forward
 uv run python main.py test-forward

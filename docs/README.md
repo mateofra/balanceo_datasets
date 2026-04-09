@@ -7,6 +7,7 @@ Este directorio contiene toda la documentación técnica y guías del proyecto *
 - **PIPELINE_MST_STGCN.md** - Pipeline completo MST para ST-GCN
 - **PIPELINE_STGCN_NORMALIZACION.md** - Normalización en pipeline ST-GCN  
 - **GUIA_TRAINING_STGCN.md** - Guía de entrenamiento ST-GCN
+- **RECREAR_DATASETS_EN_CLON.md** - Cómo recrear directorios ignorados y preparar datasets en un clon limpio
 - **consideraciones.md** - Consideraciones técnicas y de diseño
 - **REORGANIZACION_A_STGCN.md** - Notas sobre reorganización del código
 - **INFORME_USO_STARTER_PACK.md** - Reporte de uso del starter pack

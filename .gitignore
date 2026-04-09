@@ -13,3 +13,6 @@ wheels/
 /datasets/
 /data/
 /stgcn/data/
+
+#secrets
+/secrets/

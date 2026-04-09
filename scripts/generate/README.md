@@ -8,6 +8,7 @@ Scripts para generar graficas y reportes reproducibles.
 |--------|-----|
 | `src/balancer/generar_graficos_balanceo.py` | Grafica la composicion del dataset balanceado. |
 | `generar_grafica_auditoria_dpr.py` | Genera la figura resumen de la auditoria DPR. |
+| `visualizar_atencion_stgcn_mst.py` | Genera una imagen por tono MST con esqueleto y brillo por atencion espacial del ST-GCN. |
 
 ## Como se elaboraron
 
@@ -24,4 +25,5 @@ Scripts para generar graficas y reportes reproducibles.
 ```bash
 uv run python src/balancer/generar_graficos_balanceo.py --help
 python generar_grafica_auditoria_dpr.py
+uv run python scripts/generate/visualizar_atencion_stgcn_mst.py
 ```

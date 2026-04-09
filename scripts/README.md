@@ -27,3 +27,7 @@ Indice ordenado por uso real dentro del flujo del proyecto.
 - Los scripts de entrenamiento asumen `uv run` y el entorno del proyecto.
 - Las salidas oficiales se guardan en `output/` y `graficos/` segun categoria.
 - Los diagnósticos se usaron para corregir errores de rutas, calidad de landmarks y leakage temporal.
+
+## 5. Setup local en clon nuevo
+
+- [scripts/setup/bootstrap_local_data.py](setup/bootstrap_local_data.py) crea directorios ignorados por git (`datasets/`, `data/`, `stgcn/data/`) y verifica archivos clave.
