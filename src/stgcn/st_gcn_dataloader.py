@@ -69,6 +69,13 @@ class STGCNHandDataset(Dataset):
             reader = csv.DictReader(f)
             for row in reader:
                 rows.append(row)
+
+        if rows and "landmark_quality" in rows[0]:
+            rows = [
+                row for row in rows
+                if row.get("landmark_quality") == "real_3d_freihand"
+            ]
+            print(f"Muestras de entrenamiento: {len(rows)}")
         return rows
 
     def __len__(self) -> int:
@@ -204,7 +211,7 @@ if __name__ == "__main__":
     # 1. Crear dataset y dataloaders
     # Nota: usar manifiesto reparado (_fixed) que contiene solo muestras con landmarks disponibles
     loaders = create_dataloaders(
-        manifest_csv="output/train_manifest_stgcn_fixed.csv",
+        manifest_csv="output/training/train_manifest_stgcn_fixed.csv",
         batch_size=32,
         num_workers=0,  # num_workers=0 por compatibilidad Windows
         normalize=True,

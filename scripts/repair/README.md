@@ -1,26 +1,27 @@
-# 🔧 Scripts de Reparación
+# Repair
 
-Scripts para reparar y mantener integridad de datos.
+Scripts para reparar manifiestos y consistencia de datos.
 
 ## Scripts
 
-| Script | Propósito |
-|--------|-----------|
-| `repair_manifest.py` | Repara manifiestos CSV dañados o inconsistentes |
-| `check_npy_shape.py` | Verifica y reporta shapes de archivos .npy |
+| Script | Uso |
+|--------|-----|
+| `repair_manifest.py` | Repara manifiestos CSV, resuelve rutas y preserva trazabilidad. |
+| `check_npy_shape.py` | Verifica shapes de archivos `.npy`. |
+
+## Como se elaboraron
+
+- `repair_manifest.py` nacio para arreglar discrepancias entre nombres de archivo, sample_id y rutas en Windows.
+- Se extendio para conservar `landmark_quality` y no perder el contexto de origen de cada muestra.
+
+## Errores y soluciones
+
+- Rutas HaGRID no encontradas: se añadio resolucion multi-convencion por `sample_id` y escaneo recursivo.
+- Manifestos sin calidad: se incorporo `landmark_quality` para distinguir `real_3d_freihand`, `annotation_2d_projected` y `synthetic_gesture_mean`.
 
 ## Uso
 
 ```bash
-# Reparar manifiesto
 python repair_manifest.py input.csv --output output.csv
-
-# Verificar shapes de archivos .npy
 python check_npy_shape.py data/processed/landmarks/
 ```
-
-## Validaciones
-
-- Verifica que todos los paths existan
-- Valida formato CSV
-- Confirma integridad de shapes en .npy

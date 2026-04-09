@@ -1,6 +1,6 @@
-# Guía: Entrenar ST-GCN con Dataset Balanceado por MST
+﻿# GuÃ­a: Entrenar ST-GCN con Dataset Balanceado por MST
 
-## Resumen Rápido
+## Resumen RÃ¡pido
 
 ```bash
 # 1. Usar manifiesto generado + landmarks preprocesados
@@ -20,7 +20,7 @@ loaders = create_dataloaders(
 
 # 4. Entrenar modelo ST-GCN
 # - Input shape: (Batch, Channels=3, Frames=T, Vertices=21)
-# - Ver src/train_stgcn_example.py para ejemplo completo
+# - Ver src/stgcn/train_stgcn_example.py para ejemplo completo
 ```
 
 ---
@@ -32,7 +32,7 @@ loaders = create_dataloaders(
 1. **Manifiesto ST-GCN reparado** (`output/train_manifest_stgcn_fixed.csv`)
    - Contiene 10,000 muestras (FreiHAND) con landmarks disponibles
    - Columnas clave:
-     - `path_landmarks`: ruta a archivo .npy (21×3 coordinates)
+     - `path_landmarks`: ruta a archivo .npy (21Ã—3 coordinates)
      - `label`: gesto (actualmente solo 'unknown' para FreiHAND)
      - `condition`: tono de piel (**claro**, **medio**, **oscuro**)
      - `mst`: nivel de tono 1-10
@@ -52,13 +52,13 @@ loaders = create_dataloaders(
 
 ### Dataloader Personalizado
 
-**Archivo**: `src/st_gcn_dataloader.py`
+**Archivo**: `src/stgcn/st_gcn_dataloader.py`
 
 **Features**:
-- ✅ Carga landmarks desde .npy
-- ✅ Normalización por muñeca (opcional)
-- ✅ Balanceo por tono MST (weighted sampling)
-- ✅ Compatible con PyTorch DataLoader
+- âœ… Carga landmarks desde .npy
+- âœ… NormalizaciÃ³n por muÃ±eca (opcional)
+- âœ… Balanceo por tono MST (weighted sampling)
+- âœ… Compatible con PyTorch DataLoader
 
 **Uso**:
 
@@ -69,7 +69,7 @@ loaders = create_dataloaders(
     manifest_csv="output/train_manifest_stgcn_fixed.csv",
     batch_size=32,
     num_workers=0,
-    normalize=True,        # Centra landmarks en muñeca
+    normalize=True,        # Centra landmarks en muÃ±eca
     balance_by_mst=True,   # Usa WeightedRandomSampler por tono
 )
 
@@ -91,7 +91,7 @@ for batch in train_loader:
 
 ST-GCN espera: **(Batch, Channels=3, Frames=T, Vertices=21)**
 
-**Conversión**:
+**ConversiÃ³n**:
 
 ```python
 # Batch del dataloader: (BS, 21, 3)
@@ -113,28 +113,28 @@ logits = st_gcn_model(x)  # (BS, num_classes)
 
 ## Ejemplo Completo de Training
 
-**Script**: `src/train_stgcn_example.py`
+**Script**: `src/stgcn/train_stgcn_example.py`
 
 ```bash
-uv run python src/train_stgcn_example.py
+uv run python src/stgcn/train_stgcn_example.py
 ```
 
-**Qué hace**:
+**QuÃ© hace**:
 1. Carga dataset (10,000 muestras FreiHAND)
 2. Crea modelo ST-GCN simplificado
 3. Entrena 10 epochs
 4. Guarda checkpoints cada 5 epochs
-5. Registra métricas en TensorBoard
+5. Registra mÃ©tricas en TensorBoard
 
 **Output**:
 
 ```
 output/training_logs/
-├── tensorboard/
-│   └── events.out.tfevents  # Logs para TensorBoard
-├── model_epoch_5.pth
-├── model_epoch_10.pth
-└── model_final.pth
+â”œâ”€â”€ tensorboard/
+â”‚   â””â”€â”€ events.out.tfevents  # Logs para TensorBoard
+â”œâ”€â”€ model_epoch_5.pth
+â”œâ”€â”€ model_epoch_10.pth
+â””â”€â”€ model_final.pth
 ```
 
 **Ver TensorBoard**:
@@ -147,7 +147,7 @@ tensorboard --logdir=output/training_logs/tensorboard
 
 ## Balanceo por Tono de Piel (MST)
 
-### Cómo Funciona
+### CÃ³mo Funciona
 
 Por defecto, `balance_by_mst=True` en el dataloader usa **WeightedRandomSampler**:
 
@@ -156,7 +156,7 @@ Por defecto, `balance_by_mst=True` en el dataloader usa **WeightedRandomSampler*
 mst_counts = {1: 100, 2: 150, 3: 120, ..., 10: 200}
 mst_weights = {mst: total / count for mst, count in mst_counts.items()}
 
-# Asigna pesos a cada sample según su MST
+# Asigna pesos a cada sample segÃºn su MST
 weights = [mst_weights[sample.mst] for sample in dataset]
 
 # Sampler: equilibra tonosextrem (1,2,3,10) vs centrales (5,6,7)
@@ -167,7 +167,7 @@ weights = [mst_weights[sample.mst] for sample in dataset]
 Dataset balanceado:
 
 ```
-Condición (tono agrupado):
+CondiciÃ³n (tono agrupado):
   - Claro (MST 1-3): 33%
   - Medio (MST 4-7): 33%
   - Oscuro (MST 8-10): 34%
@@ -196,12 +196,12 @@ for batch in train_loader:
 print("MST distribution:", dict(mst_counts))
 print("Condition distribution:", dict(condition_counts))
 
-# Debería estar casi uniforme (balanceado)
+# DeberÃ­a estar casi uniforme (balanceado)
 ```
 
 ---
 
-## Integración con Modelo ST-GCN Real
+## IntegraciÃ³n con Modelo ST-GCN Real
 
 Si usas un modelo ST-GCN existente (ej: [yysijie/st-gcn](https://github.com/yysijie/st-gcn)):
 
@@ -249,7 +249,7 @@ class MST_Logger:
 
 ```python
 # Validar que el modelo no sea sesgado por tono
-# Loss + accuracy por MST debería ser similar
+# Loss + accuracy por MST deberÃ­a ser similar
 
 results_by_mst = defaultdict(lambda: {"acc": [], "loss": []})
 
@@ -266,7 +266,7 @@ for batch in val_loader:
         if mask.any():
             results_by_mst[m]["acc"].append((preds[mask] == y[mask]).mean().item())
             
-print("Accuracy por MST (debería ser uniforme):")
+print("Accuracy por MST (deberÃ­a ser uniforme):")
 for mst, metrics in sorted(results_by_mst.items()):
     avg_acc = np.mean(metrics["acc"]) if metrics["acc"] else 0
     print(f"MST {mst:2d}: {avg_acc:.1%}")
@@ -274,22 +274,22 @@ for mst, metrics in sorted(results_by_mst.items()):
 
 ---
 
-## Próximos Pasos (Roadmap)
+## PrÃ³ximos Pasos (Roadmap)
 
 ### Corto plazo (Ahora disponible)
-- ✅ Dataloader con landmarks de FreiHAND (10K)
-- ✅ Balanceo por MST
-- ✅ Script de training ST-GCN simplificado
+- âœ… Dataloader con landmarks de FreiHAND (10K)
+- âœ… Balanceo por MST
+- âœ… Script de training ST-GCN simplificado
 
-### Mediano plazo (Requiere imágenes HaGRID)
-- ⏳ Procesar landmarks HaGRID con MediaPipe
-- ⏳ Generar CSV de MST para todas las imágenes
-- ⏳ Manifiesto ST-GCN con 20K muestras FreiHAND + HaGRID
+### Mediano plazo (Requiere imÃ¡genes HaGRID)
+- â³ Procesar landmarks HaGRID con MediaPipe
+- â³ Generar CSV de MST para todas las imÃ¡genes
+- â³ Manifiesto ST-GCN con 20K muestras FreiHAND + HaGRID
 
-### Largo plazo (Evaluación en producción)
-- ⏳ Testing fairness: evaluar modelo por tono MST
-- ⏳ Comparar predicciones: MST 1 vs MST 10
-- ⏳ Metricas de equidad: ¿accuracy similar para todos tonos?
+### Largo plazo (EvaluaciÃ³n en producciÃ³n)
+- â³ Testing fairness: evaluar modelo por tono MST
+- â³ Comparar predicciones: MST 1 vs MST 10
+- â³ Metricas de equidad: Â¿accuracy similar para todos tonos?
 
 ---
 
@@ -299,10 +299,10 @@ for mst, metrics in sorted(results_by_mst.items()):
 
 **Causa**: Rutas en manifiesto no corresponden a archivos reales.
 
-**Solución**:
+**SoluciÃ³n**:
 
 ```bash
-# Ejecutar reparación de rutas
+# Ejecutar reparaciÃ³n de rutas
 uv run python repair_manifest.py
 # Genera: output/train_manifest_stgcn_fixed.csv
 # Usa este en tu dataloader
@@ -310,7 +310,7 @@ uv run python repair_manifest.py
 
 ### Problema: Out of Memory durante training
 
-**Solución**:
+**SoluciÃ³n**:
 ```python
 loaders = create_dataloaders(
     manifest_csv="output/train_manifest_stgcn_fixed.csv",
@@ -323,7 +323,7 @@ loaders = create_dataloaders(
 
 **Causa**: Dataset FreiHAND solo tiene un gesto ("unknown").
 
-**Solución**: Esperar a procesar HaGRID con múltiples gestos.
+**SoluciÃ³n**: Esperar a procesar HaGRID con mÃºltiples gestos.
 
 ---
 
@@ -343,3 +343,4 @@ Para preguntas sobre el pipeline de balanceo:
 - Ver: `PIPELINE_MST_STGCN.md`
 - Scripts: `src/`
 - Datos: `output/`
+

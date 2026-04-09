@@ -142,8 +142,8 @@ def print_report():
      └─ Prioridad: BAJA (FreiHAND suficiente para v1)
   
   3. ONE-HAND: MediaPipe num_hands=1
-     ├─ Impacto: Gestos dos manos pierden información
-     ├─ Ubicación: src/procesar_landmarks_hagrid_mediapipe.py:32
+      ├─ Impacto: Gestos dos manos pierden información
+      ├─ Ubicación: src/preprocessing/procesar_landmarks_hagrid_mediapipe.py:32
      ├─ Acción: Regenerar con num_hands=2 (shape 42,3 en futuro)
      └─ Prioridad: MEDIA (limitación arquitectónica)
 

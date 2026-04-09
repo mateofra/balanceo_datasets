@@ -1,28 +1,27 @@
-# 📊 Scripts de Generación
+# Generate
 
-Scripts para generar reportes, métricas y visualizaciones.
+Scripts para generar graficas y reportes reproducibles.
 
 ## Scripts
 
-| Script | Propósito |
-|--------|-----------|
-| `generar_graficos_balanceo.py` | Genera gráficos de distribución del balanceo por tono MST |
+| Script | Uso |
+|--------|-----|
+| `src/balancer/generar_graficos_balanceo.py` | Grafica la composicion del dataset balanceado. |
+| `generar_grafica_auditoria_dpr.py` | Genera la figura resumen de la auditoria DPR. |
+
+## Como se elaboraron
+
+- Las graficas de balanceo se basan en manifiestos balanceados y resument la distribucion por fuente, MST y gesto.
+- La grafica de auditoria se construye sobre `output/auditoria/auditoria_dpr_resultados.csv` y resume accuracy por bloque MST junto con TVD por par.
+
+## Errores y soluciones
+
+- Se detecto que el TVD original no era canónico: se corrigio la formulacion y se separo en una grafica especifica de auditoria.
+- Se evitó mezclar salidas de balanceo con salidas de auditoria creando carpetas separadas por finalidad.
 
 ## Uso
 
 ```bash
-# Generar gráficos de balanceo
-python generar_graficos_balanceo.py \
-  --manifest output/manifests/train_manifest_stgcn.csv \
-  --output output/graphics/
+uv run python src/balancer/generar_graficos_balanceo.py --help
+python generar_grafica_auditoria_dpr.py
 ```
-
-## Salida
-
-Los gráficos se guardan en `output/graphics/` con formatos PNG/PDF.
-
-## Visualizaciones
-
-- Distribución por tono MST (claro/medio/oscuro)
-- Proporción FreiHAND vs HaGRID
-- Histogramas de clases

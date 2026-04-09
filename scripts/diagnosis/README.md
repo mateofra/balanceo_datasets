@@ -1,32 +1,23 @@
-# 🔍 Scripts de Diagnóstico
+# Diagnosis
 
-Scripts para validar y diagnosticar el estado de los datos y la pipeline.
+Scripts de verificacion usados para detectar problemas reales de la tuberia.
 
 ## Scripts
 
-| Script | Propósito |
-|--------|-----------|
-| `diagnosticar_normalizacion.py` | Verifica la normalización de landmarks y genera reporte JSON |
-| `diagnose_paths.py` | Valida rutas de datos y manifiestos |
-| `verificar_landmarks.py` | Inspecciona integridad de landmarks |
-| `verificar_secuencias.py` | Valida secuencias generadas para ST-GCN |
+| Script | Uso |
+|--------|-----|
+| `diagnosticar_normalizacion.py` | Verifica normalizacion de landmarks y produce JSON. |
+| `diagnose_paths.py` | Comprueba rutas de datos y manifiestos. |
+| `verificar_landmarks.py` | Valida integridad y shape de landmarks. |
+| `verificar_secuencias.py` | Comprueba secuencias generadas para ST-GCN. |
 
-## Uso
+## Hallazgos resueltos
 
-```bash
-# Diagnóstico completo de normalización
-python diagnosticar_normalizacion.py
+- Se detecto que HaGRID no tenia raw images en el workspace, solo anotaciones.
+- Se detectaron desajustes entre sample_id, rutas Windows y rutas relativas.
+- Se confirmo que algunas secuencias eran casi estaticas y generaban una tarea trivial.
 
-# Verificar rutas
-python diagnose_paths.py
+## Salidas
 
-# Inspeccionar landmarks
-python verificar_landmarks.py
-
-# Validar secuencias
-python verificar_secuencias.py
-```
-
-## Salida
-
-Los reportes se guardan típicamente en `output/reports/` formato JSON.
+- Reportes JSON y logs de diagnostico: `output/reports/`
+- Resumenes puntuales: `scripts/diagnosis/diagnostico_normalizacion.json`

@@ -15,7 +15,13 @@ from tqdm import tqdm
 import json
 from datetime import datetime
 
-from st_gcn_dataloader import create_dataloaders
+import sys
+
+ROOT = Path(__file__).resolve().parents[2]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from src.stgcn.st_gcn_dataloader import create_dataloaders
 
 
 class ST_GCNModel(nn.Module):

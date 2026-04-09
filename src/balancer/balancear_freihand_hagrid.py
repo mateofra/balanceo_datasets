@@ -28,6 +28,53 @@ class SampleRecord:
     mst_origin: str = "missing"
 
 
+def _to_repo_relative_posix(path: Path) -> str:
+    """Convierte una ruta absoluta/relativa a relativa al repo con separador POSIX."""
+    try:
+        rel = path.resolve().relative_to(Path.cwd().resolve())
+    except ValueError:
+        rel = path
+    return str(rel).replace("\\", "/")
+
+
+def _load_landmark_mapping(mapping_json: Path | None) -> dict[str, str]:
+    """Carga mapeo sample_id -> path_landmarks; retorna vacio si no existe."""
+    if mapping_json is None:
+        return {}
+    if not mapping_json.exists():
+        return {}
+
+    with mapping_json.open("r", encoding="utf-8") as f:
+        payload = json.load(f)
+
+    mapping: dict[str, str] = {}
+    for raw_key, raw_path in payload.items():
+        key = str(raw_key).strip().lower()
+        if not key:
+            continue
+        mapping[key] = str(raw_path).replace("\\", "/")
+    return mapping
+
+
+def _load_quality_mapping(mapping_json: Path | None) -> dict[str, str]:
+    """Carga mapeo sample_id -> landmark_quality; retorna vacio si no existe."""
+    if mapping_json is None:
+        return {}
+    if not mapping_json.exists():
+        return {}
+
+    with mapping_json.open("r", encoding="utf-8") as f:
+        payload = json.load(f)
+
+    mapping: dict[str, str] = {}
+    for raw_key, raw_quality in payload.items():
+        key = str(raw_key).strip().lower()
+        if not key:
+            continue
+        mapping[key] = str(raw_quality).strip()
+    return mapping
+
+
 def _load_freihand_records(training_xyz_path: Path) -> list[SampleRecord]:
     with training_xyz_path.open("r", encoding="utf-8") as f:
         xyz = json.load(f)
@@ -528,12 +575,53 @@ def _mst_to_condition(mst: int | None) -> str:
     return "oscuro"
 
 
-def _build_landmark_path(record: SampleRecord, landmarks_root: Path) -> str:
+def _build_landmark_path(
+    record: SampleRecord,
+    landmarks_root: Path,
+    hagrid_mapping: dict[str, str] | None = None,
+    landmarks_index: dict[str, str] | None = None,
+) -> str:
+    hagrid_mapping = hagrid_mapping or {}
+    landmarks_index = landmarks_index or {}
+
     if record.source == "hagrid":
+        sample_id_key = record.sample_id.strip().lower()
+        prefixed_key = f"hagrid_{record.gesture}_{sample_id_key}"
+
+        # 1) Prioridad a mapping explícito generado por el pipeline de extracción.
+        mapped_path = hagrid_mapping.get(sample_id_key)
+        if mapped_path:
+            return mapped_path
+
+        # 2) Resolver por índice real de archivos en disco.
+        indexed = landmarks_index.get(sample_id_key)
+        if indexed:
+            return indexed
+
+        indexed_prefixed = landmarks_index.get(prefixed_key)
+        if indexed_prefixed:
+            return indexed_prefixed
+
+        # 3) Fallback compatible con manifests históricos.
         return str(landmarks_root / "hagrid" / record.gesture / f"{record.sample_id}.npy")
 
     freihand_id = _extract_freihand_numeric_id(record.sample_id)
     return str(landmarks_root / "freihand" / f"{freihand_id}.npy")
+
+
+def _infer_landmark_quality(
+    record: SampleRecord,
+    hagrid_quality_mapping: dict[str, str] | None = None,
+) -> str:
+    """Etiqueta calidad de landmarks para auditoria y filtrado."""
+    if record.source == "freihand":
+        return "real_3d_freihand"
+
+    hagrid_quality_mapping = hagrid_quality_mapping or {}
+    quality = hagrid_quality_mapping.get(record.sample_id.strip().lower())
+    if quality:
+        return quality
+    return "unknown_hagrid_quality"
 
 
 def _write_stgcn_manifest_csv(
@@ -541,8 +629,23 @@ def _write_stgcn_manifest_csv(
     records: list[SampleRecord],
     landmarks_root: Path,
     include_missing_mst: bool,
+    hagrid_mapping: dict[str, str] | None = None,
+    hagrid_quality_mapping: dict[str, str] | None = None,
 ) -> None:
     output_csv.parent.mkdir(parents=True, exist_ok=True)
+
+    # Indexa landmarks existentes una sola vez para reparar rutas de forma robusta.
+    landmarks_index: dict[str, str] = {}
+    if landmarks_root.exists():
+        for npy_path in landmarks_root.rglob("*.npy"):
+            key = npy_path.stem.strip().lower()
+            if not key:
+                continue
+            landmarks_index[key] = _to_repo_relative_posix(npy_path)
+
+    missing_by_source = Counter()
+    written_rows = 0
+
     with output_csv.open("w", encoding="utf-8", newline="") as f:
         writer = csv.DictWriter(
             f,
@@ -552,6 +655,7 @@ def _write_stgcn_manifest_csv(
                 "label",
                 "condition",
                 "dataset",
+                "landmark_quality",
                 "mst",
                 "mst_origin",
                 "split",
@@ -564,18 +668,41 @@ def _write_stgcn_manifest_csv(
             if condition == "sin_mst" and not include_missing_mst:
                 continue
 
+            path_landmarks = _build_landmark_path(
+                record,
+                landmarks_root,
+                hagrid_mapping=hagrid_mapping,
+                landmarks_index=landmarks_index,
+            )
+
+            if not Path(path_landmarks).exists():
+                missing_by_source[record.source] += 1
+
             writer.writerow(
                 {
                     "sample_id": record.sample_id,
-                    "path_landmarks": _build_landmark_path(record, landmarks_root),
+                    "path_landmarks": path_landmarks,
                     "label": record.gesture,
                     "condition": condition,
                     "dataset": record.source,
+                    "landmark_quality": _infer_landmark_quality(
+                        record,
+                        hagrid_quality_mapping=hagrid_quality_mapping,
+                    ),
                     "mst": "" if record.mst is None else record.mst,
                     "mst_origin": record.mst_origin,
                     "split": "train",
                 }
             )
+            written_rows += 1
+
+    if missing_by_source:
+        missing_total = sum(missing_by_source.values())
+        print(
+            "Aviso: el manifiesto ST-GCN incluye rutas de landmarks faltantes "
+            f"({missing_total}/{written_rows})."
+        )
+        print(f"- faltantes por fuente: {dict(missing_by_source)}")
 
 
 def _compute_mst_match_report(
@@ -739,7 +866,7 @@ def parse_args() -> argparse.Namespace:
         default=DEFAULT_JITTER_FACTOR,
         help=(
             "Factor de replicacion virtual para candidatos MST 8-9 en entrenamiento "
-            "(0.0 desactiva; por ejemplo 0.5 agrega 50% de candidatos extra)."
+            "(0.0 desactiva; por ejemplo 0.5 agrega 50%% de candidatos extra)."
         ),
     )
     parser.add_argument(
@@ -801,6 +928,24 @@ def parse_args() -> argparse.Namespace:
         help=(
             "Directorio base de landmarks preprocesados (.npy). "
             "Se usa para construir path_landmarks en manifiesto ST-GCN."
+        ),
+    )
+    parser.add_argument(
+        "--hagrid-landmarks-mapping-json",
+        type=Path,
+        default=Path("csv/hagrid_landmarks_mapping.json"),
+        help=(
+            "JSON opcional sample_id->path_landmarks generado al procesar HaGRID. "
+            "Si existe, se usa para resolver rutas de HaGRID de forma exacta."
+        ),
+    )
+    parser.add_argument(
+        "--hagrid-landmarks-quality-json",
+        type=Path,
+        default=Path("csv/hagrid_landmarks_quality.json"),
+        help=(
+            "JSON opcional sample_id->landmark_quality para etiquetar calidad de "
+            "landmarks HaGRID (por ejemplo annotation_2d_projected/synthetic_gesture_mean)."
         ),
     )
     parser.add_argument(
@@ -900,11 +1045,15 @@ def main() -> None:
             print(f"Entrenamiento landmarks por tono: {args.output_landmark_train_dir}")
 
     if args.output_stgcn_manifest_csv is not None:
+        hagrid_mapping = _load_landmark_mapping(args.hagrid_landmarks_mapping_json)
+        hagrid_quality_mapping = _load_quality_mapping(args.hagrid_landmarks_quality_json)
         _write_stgcn_manifest_csv(
             args.output_stgcn_manifest_csv,
             balanced_records,
             landmarks_root=args.landmarks_root_dir,
             include_missing_mst=args.include_missing_mst_in_stgcn,
+            hagrid_mapping=hagrid_mapping,
+            hagrid_quality_mapping=hagrid_quality_mapping,
         )
         print(f"Manifiesto ST-GCN: {args.output_stgcn_manifest_csv}")
 

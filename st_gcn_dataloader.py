@@ -37,6 +37,12 @@ class STGCNDataset(Dataset):
             augment_temporal: Si True, aplica temporal dropout (simula oclusión)
         """
         self.manifest = pd.read_csv(manifest_path)
+
+        if "landmark_quality" in self.manifest.columns:
+            self.manifest = self.manifest[
+                self.manifest["landmark_quality"] == "real_3d_freihand"
+            ].reset_index(drop=True)
+            print(f"Muestras de entrenamiento: {len(self.manifest)}")
         
         # Filtrar por split
         if split in self.manifest['split'].unique():

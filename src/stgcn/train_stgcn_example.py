@@ -16,10 +16,13 @@ from torch.utils.tensorboard import SummaryWriter
 from pathlib import Path
 from tqdm import tqdm
 
+ROOT = Path(__file__).resolve().parents[2]
+
 # Importar dataloader personalizado
 import sys
-sys.path.insert(0, str(Path(__file__).parent))
-from st_gcn_dataloader import create_dataloaders
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+from src.stgcn.st_gcn_dataloader import create_dataloaders
 
 
 class SimpleST_GCNModel(nn.Module):
@@ -182,7 +185,7 @@ def main():
     BATCH_SIZE = 32
     NUM_EPOCHS = 10
     LEARNING_RATE = 0.001
-    MANIFEST_CSV = Path("output/train_manifest_stgcn_fixed.csv")
+    MANIFEST_CSV = Path("output/training/train_manifest_stgcn_fixed.csv")
     OUTPUT_DIR = Path("output/training_logs")
     OUTPUT_DIR.mkdir(exist_ok=True)
 

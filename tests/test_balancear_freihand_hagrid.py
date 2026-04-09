@@ -6,7 +6,7 @@ import io
 from contextlib import redirect_stdout
 from pathlib import Path
 
-from src.balancear_freihand_hagrid import (
+from src.balancer.balancear_freihand_hagrid import (
     SampleRecord,
     _build_landmark_path,
     _build_balanced_manifest,

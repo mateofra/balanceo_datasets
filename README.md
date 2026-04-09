@@ -11,7 +11,7 @@ balanceo_datasets/
 │   ├── balancer/            ⚖️  Balanceo de datasets
 │   ├── preprocessing/       🔄 Preprocesamiento de landmarks
 │   ├── classification/      🎨 Clasificación MST
-│   └── st_gcn_dataloader.py 🔗 DataLoader para ST-GCN
+│   └── stgcn/               🕸️  Modelo y utilidades ST-GCN
 ├── scripts/                 🔧 Scripts ejecutables
 │   ├── diagnosis/           🔍 Diagnóstico y validación
 │   ├── training/            🎓 Entrenamiento y visualización
@@ -51,7 +51,7 @@ data/processed/landmarks/
 
 **2) Importar DataLoader:**
 ```python
-from src.st_gcn_dataloader import create_dataloaders
+from src.stgcn.st_gcn_dataloader import create_dataloaders
 
 loaders = create_dataloaders(
     manifest_csv="output/manifests/train_manifest_stgcn_fixed.csv",
@@ -72,7 +72,7 @@ for batch in train_loader:
 
 **3) Entrenar:**
 ```bash
-uv run python src/train_stgcn_example.py
+uv run python src/stgcn/train_stgcn_example.py
 ```
 
 📍 Checkpoints → `output/training_logs/`
@@ -99,6 +99,67 @@ uv run python src/train_stgcn_example.py
 | **Balanceo MST** | Claro/Medio/Oscuro ≈ 33% c/u |
 | **Oversampling** | MST extremos (1,2,3,10) |
 
+## Estado actual del dataset
+
+| Fuente | Calidad | Usado en entrenamiento |
+|--------|---------|----------------------|
+| FreiHAND (10,000) | real_3d_freihand | ✓ Sí |
+| HaGRID annotation_2d (9,419) | annotation_2d_projected | ✗ Pendiente reprocesado con MediaPipe |
+| HaGRID synthetic_mean (581) | synthetic_gesture_mean | ✗ Excluido |
+
+HaGRID pendiente: requiere descarga de imagenes crudas y reprocesado con MediaPipe
+para obtener landmarks 3D reales equivalentes a FreiHAND.
+
+## Organización actual por finalidad
+
+### Balanceo
+
+- Artefactos de balanceo y curado en [output/balanceo/](output/balanceo/README.md)
+- Scripts de balanceo en [src/balancer/balancear_freihand_hagrid.py](src/balancer/balancear_freihand_hagrid.py)
+
+### Training
+
+- Artefactos de entrenamiento en [output/training/](output/training/README.md)
+- Entrenamiento supervisado en [scripts/training/train_supervisado.py](scripts/training/train_supervisado.py)
+- Entrenamiento auto-supervisado en [scripts/training/train_autosupervisado.py](scripts/training/train_autosupervisado.py)
+
+### Auditoria
+
+- Resultados y graficas en [output/auditoria/](output/auditoria/README.md)
+- Grafica resumen en [graficos/auditoria_dpr/](graficos/auditoria_dpr/README.md)
+- Auditoria DPR en [scripts/auditoria/auditoria_dpr.py](scripts/auditoria/auditoria_dpr.py)
+
+### Scripts
+
+- Indice ordenado de scripts en [scripts/README.md](scripts/README.md)
+
+## Errores y soluciones resueltos
+
+- Rutas HaGRID inconsistentes: se corrigieron con resolucion por `sample_id`, rutas canonicas y filtrado de archivos inexistentes.
+- Secuencias sintéticas demasiado estaticas: se diagnosticó leakage temporal y se cambio la tarea auto-supervisada para evitar trampa trivial.
+- Entorno CPU-only: se fijo PyTorch con indice CUDA para usar la RTX 4050 desde `uv`.
+- TVD mal definido: se reemplazo por TVD canonico entre distribuciones de error por bloque MST.
+- Datos mezclados por finalidad: se separaron artefactos de balanceo, training y auditoria en carpetas especificas.
+
+## Estructura de directorios excluidos con .gitignore
+
+Para evitar subir datos pesados o sensibles, las carpetas ignoradas deben seguir esta convención:
+
+```text
+data/
+  raw/                # datos crudos locales, nunca versionados
+  processed/          # intermedios regenerables
+datasets/             # dumps externos o datasets descargados
+stgcn/data/           # datos del submodulo ST-GCN
+.venv/                # entorno local de Python
+```
+
+Regla operativa:
+
+- Si un artefacto puede regenerarse con scripts del repo, debe ir a un directorio ignorado.
+- Si un artefacto es parte del entregable (manifiestos finales, historiales, auditoria), debe ir en `output/` o `graficos/` en carpetas tematicas.
+- No mezclar datos crudos con artefactos finales.
+
 ## 🔧 Requisitos
 
 - Python 3.13+
@@ -107,6 +168,35 @@ uv run python src/train_stgcn_example.py
 **Instalación:**
 ```bash
 uv sync
+```
+
+## Launcher unificado
+
+Se puede usar un único punto de entrada con `main.py`:
+
+```bash
+# Ver comandos disponibles
+uv run python main.py --help
+
+# Entrenamiento supervisado (modo por defecto)
+uv run python main.py train
+
+# Entrenamiento auto-supervisado por 2 epocas
+uv run python main.py train --modo autosupervisado --epochs 2
+
+# Auditoria y grafica
+uv run python main.py auditoria
+
+# Pipeline completo: entrenamiento + auditoria
+uv run python main.py pipeline --modo supervisado --epochs 30
+
+# Solo auditoria usando artefactos existentes (sin reentrenar)
+uv run python main.py pipeline --skip-train
+
+# Nota: pipeline imprime un resumen final con estado y rutas de artefactos
+
+# Test rapido de forward
+uv run python main.py test-forward
 ```
 
 ---
@@ -184,10 +274,10 @@ uv run python src/balancer/balancear_freihand_hagrid.py \
 
 ## 📊 Generar Gráficos
 
-**Ubicación:** [`scripts/generate/generar_graficos_balanceo.py`](scripts/generate/README.md)
+**Ubicación:** [`src/balancer/generar_graficos_balanceo.py`](src/balancer/README.md)
 
 ```bash
-uv run python scripts/generate/generar_graficos_balanceo.py \
+uv run python src/balancer/generar_graficos_balanceo.py \
   --manifest-csv csv/train_manifest_balanceado_freihand_hagrid.csv \
   --summary-json output/reports/resumen_balanceo.json \
   --output-dir output/graphics

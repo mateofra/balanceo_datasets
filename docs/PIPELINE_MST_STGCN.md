@@ -1,4 +1,4 @@
-# Pipeline Completo: Balanceo MST → ST-GCN
+﻿# Pipeline Completo: Balanceo MST â†’ ST-GCN
 
 ## Objetivo
 Generar un dataset balanceado por tono de piel (escala MST 1-10) a partir de FreiHAND + HaGRID, con landmarks preprocesados listos para entrenar ST-GCN.
@@ -9,88 +9,88 @@ Generar un dataset balanceado por tono de piel (escala MST 1-10) a partir de Fre
 
 ```
 ENTRADA
-  ├─ Imágenes de manos (FreiHAND + HaGRID)
-  ├─ Anotaciones (HaGRID .json)
-  └─ Datos 3D (FreiHAND training_xyz.json)
-       ↓
-[FASE 1] Classificación de Tonos MST
-  ├─ Input: Imágenes .jpg
-  ├─ Script: src/clasificar_mst_mediapipe.py
-  ├─ Proceso: MediaPipe Hand → Palma → LAB color → Clasificar en MST 1-10
-  └─ Output: CSV con columnas [sample_id, image_id, mst_level]
-       ↓
-[FASE 2] Extracción de Landmarks
-  ├─ Input: Imágenes + anotaciones HaGRID
-  ├─ Herramienta: MediaPipe Hand Landmarker o FreiHAND xyz
-  ├─ Proceso: Extraer 21 puntos de mano → normalizar → guardar como .npy
-  ├─ Output: data/processed/landmarks/
-  │   ├─ freihand_00000001.npy (21×3 coords)
-  │   └─ hagrid_gesture_imageid.npy (21×3 coords)
-  └─ Estructura esperada: Nx21x3 (N muestras, 21 landmarks, 3 coords xyz)
-       ↓
-[FASE 3] Balanceo con Información MST
-  ├─ Input: 
-  │   ├─ CSV de MST (Phase 1 output)
-  │   ├─ datasets/training_xyz.json (FreiHAND)
-  │   ├─ datasets/ann_subsample/ (HaGRID anotaciones)
-  │   └─ CSV anterior si existe (para reproducibilidad)
-  ├─ Script: src/balancear_freihand_hagrid.py
-  ├─ Configuración:
-  │   ├─ --target-size 20000 (muestras objetivo)
-  │   ├─ --hagrid-ratio 0.5 (50% HaGRID, 50% FreiHAND)
-  │   ├─ --mst-csv <path_a_csv_fase1>
-  │   ├─ --extreme-factor 2.0 (peso extra para MST 1,2,3,10)
-  │   ├─ --dark-jitter-factor 0.5 (replicación virtual MST 8-9)
-  │   └─ --impute-missing-mst (llenar MST faltantes con imputation)
-  ├─ Output CSV columnas:
-  │   ├─ sample_id
-  │   ├─ source (freihand/hagrid)
-  │   ├─ gesture
-  │   ├─ mst (1-10)
-  │   └─ mst_origin (csv/imputed)
-  └─ Output: output/train_manifest_balanceado_freihand_hagrid.csv
-       ↓
-[FASE 4] Generación Manifiesto ST-GCN
-  ├─ Input:
-  │   ├─ train_manifest_balanceado_freihand_hagrid.csv (Phase 3)
-  │   ├─ data/processed/landmarks/ (Phase 2)
-  ├─ Script: (ya integrado en balancear_freihand_hagrid.py)
-  ├─ Flag: --output-stgcn-manifest-csv output/train_manifest_stgcn.csv
-  ├─ Output columnas:
-  │   ├─ sample_id
-  │   ├─ path_landmarks (ruta relativa a .npy)
-  │   ├─ label (gesto)
-  │   ├─ condition (claro/medio/oscuro)
-  │   ├─ dataset (freihand/hagrid)
-  │   ├─ mst (1-10)
-  │   ├─ mst_origin (csv/imputed)
-  │   └─ split (train/val/test)
-  └─ Output: output/train_manifest_stgcn.csv
-       ↓
+  â”œâ”€ ImÃ¡genes de manos (FreiHAND + HaGRID)
+  â”œâ”€ Anotaciones (HaGRID .json)
+  â””â”€ Datos 3D (FreiHAND training_xyz.json)
+       â†“
+[FASE 1] ClassificaciÃ³n de Tonos MST
+  â”œâ”€ Input: ImÃ¡genes .jpg
+  â”œâ”€ Script: src/classification/clasificar_mst_mediapipe.py
+  â”œâ”€ Proceso: MediaPipe Hand â†’ Palma â†’ LAB color â†’ Clasificar en MST 1-10
+  â””â”€ Output: CSV con columnas [sample_id, image_id, mst_level]
+       â†“
+[FASE 2] ExtracciÃ³n de Landmarks
+  â”œâ”€ Input: ImÃ¡genes + anotaciones HaGRID
+  â”œâ”€ Herramienta: MediaPipe Hand Landmarker o FreiHAND xyz
+  â”œâ”€ Proceso: Extraer 21 puntos de mano â†’ normalizar â†’ guardar como .npy
+  â”œâ”€ Output: data/processed/landmarks/
+  â”‚   â”œâ”€ freihand_00000001.npy (21Ã—3 coords)
+  â”‚   â””â”€ hagrid_gesture_imageid.npy (21Ã—3 coords)
+  â””â”€ Estructura esperada: Nx21x3 (N muestras, 21 landmarks, 3 coords xyz)
+       â†“
+[FASE 3] Balanceo con InformaciÃ³n MST
+  â”œâ”€ Input: 
+  â”‚   â”œâ”€ CSV de MST (Phase 1 output)
+  â”‚   â”œâ”€ datasets/training_xyz.json (FreiHAND)
+  â”‚   â”œâ”€ datasets/ann_subsample/ (HaGRID anotaciones)
+  â”‚   â””â”€ CSV anterior si existe (para reproducibilidad)
+  â”œâ”€ Script: src/balancer/balancear_freihand_hagrid.py
+  â”œâ”€ ConfiguraciÃ³n:
+  â”‚   â”œâ”€ --target-size 20000 (muestras objetivo)
+  â”‚   â”œâ”€ --hagrid-ratio 0.5 (50% HaGRID, 50% FreiHAND)
+  â”‚   â”œâ”€ --mst-csv <path_a_csv_fase1>
+  â”‚   â”œâ”€ --extreme-factor 2.0 (peso extra para MST 1,2,3,10)
+  â”‚   â”œâ”€ --dark-jitter-factor 0.5 (replicaciÃ³n virtual MST 8-9)
+  â”‚   â””â”€ --impute-missing-mst (llenar MST faltantes con imputation)
+  â”œâ”€ Output CSV columnas:
+  â”‚   â”œâ”€ sample_id
+  â”‚   â”œâ”€ source (freihand/hagrid)
+  â”‚   â”œâ”€ gesture
+  â”‚   â”œâ”€ mst (1-10)
+  â”‚   â””â”€ mst_origin (csv/imputed)
+  â””â”€ Output: output/train_manifest_balanceado_freihand_hagrid.csv
+       â†“
+[FASE 4] GeneraciÃ³n Manifiesto ST-GCN
+  â”œâ”€ Input:
+  â”‚   â”œâ”€ train_manifest_balanceado_freihand_hagrid.csv (Phase 3)
+  â”‚   â”œâ”€ data/processed/landmarks/ (Phase 2)
+  â”œâ”€ Script: (ya integrado en balancear_freihand_hagrid.py)
+  â”œâ”€ Flag: --output-stgcn-manifest-csv output/train_manifest_stgcn.csv
+  â”œâ”€ Output columnas:
+  â”‚   â”œâ”€ sample_id
+  â”‚   â”œâ”€ path_landmarks (ruta relativa a .npy)
+  â”‚   â”œâ”€ label (gesto)
+  â”‚   â”œâ”€ condition (claro/medio/oscuro)
+  â”‚   â”œâ”€ dataset (freihand/hagrid)
+  â”‚   â”œâ”€ mst (1-10)
+  â”‚   â”œâ”€ mst_origin (csv/imputed)
+  â”‚   â””â”€ split (train/val/test)
+  â””â”€ Output: output/train_manifest_stgcn.csv
+       â†“
 [SALIDA FINAL]
-  └─ Listo para ST-GCN training:
-     ├─ Datos: data/processed/landmarks/*.npy
-     ├─ Manifiesto: output/train_manifest_stgcn.csv
-     ├─ Metadata: output/resumen_balanceo_*.json
-     └─ Splits: train/val balanceados por tono MST
+  â””â”€ Listo para ST-GCN training:
+     â”œâ”€ Datos: data/processed/landmarks/*.npy
+     â”œâ”€ Manifiesto: output/train_manifest_stgcn.csv
+     â”œâ”€ Metadata: output/resumen_balanceo_*.json
+     â””â”€ Splits: train/val balanceados por tono MST
 ```
 
 ---
 
 ## Fases Detalladas
 
-### [FASE 1] Clasificación de Tonos MST
+### [FASE 1] ClasificaciÃ³n de Tonos MST
 
 **Objetivo**: Para cada imagen de mano, detectar el tono de piel en escala MST.
 
 **Script**:
 ```bash
-uv run python src/clasificar_mst_mediapipe.py <imagen> --model-path models/hand_landmarker.task
+uv run python src/classification/clasificar_mst_mediapipe.py <imagen> --model-path models/hand_landmarker.task
 ```
 
 **Input requerido**:
-- Carpeta de imágenes: `data/raw/images/` (structure similar a HaGRID)
-- Modelo: `models/hand_landmarker.task` ✓ (ya existe)
+- Carpeta de imÃ¡genes: `data/raw/images/` (structure similar a HaGRID)
+- Modelo: `models/hand_landmarker.task` âœ“ (ya existe)
 
 **Output CSV esperado**:
 ```csv
@@ -102,73 +102,73 @@ hagrid_ok_image001,ok_001,3,claro
 
 **Costos**:
 - ~50-100ms por imagen (con GPU: ~10-20ms)
-- 20K imágenes ≈ 30-50 min (sin GPU) o 5-10 min (con GPU)
+- 20K imÃ¡genes â‰ˆ 30-50 min (sin GPU) o 5-10 min (con GPU)
 
 **Notas**:
 - Requiere `mediapipe`, `opencv-python`, `numpy` (ya instalados)
-- Si falta imagen → skip automático
+- Si falta imagen â†’ skip automÃ¡tico
 - Guarda en `csv/mst_classifications.csv`
 
 ---
 
-### [FASE 2] Extracción de Landmarks (Opcional pero Recomendado)
+### [FASE 2] ExtracciÃ³n de Landmarks (Opcional pero Recomendado)
 
 **Objetivo**: Convertir 21 landmarks de MediaPipe a archivos `.npy` normalizados.
 
 **Dos opciones**:
 
-#### Opción A: Usar landmarks de FreiHAND (ya disponibles)
+#### OpciÃ³n A: Usar landmarks de FreiHAND (ya disponibles)
 ```bash
-# Los datos ya están en datasets/training_xyz.json
-# Solo necesita conversión a estructura Nx21x3 → .npy individual
+# Los datos ya estÃ¡n en datasets/training_xyz.json
+# Solo necesita conversiÃ³n a estructura Nx21x3 â†’ .npy individual
 ```
 
 **Script necesario** (crear):
 ```python
-# src/procesar_landmarks_freihand.py
+# src/preprocessing/procesar_landmarks_freihand.py
 # Lee datasets/training_xyz.json
-# Para cada índice, guarda data/processed/landmarks/freihand_XXXXXXX.npy
+# Para cada Ã­ndice, guarda data/processed/landmarks/freihand_XXXXXXX.npy
 ```
 
-#### Opción B: Generar de HaGRID con MediaPipe
+#### OpciÃ³n B: Generar de HaGRID con MediaPipe
 ```bash
-# Requiere: imágenes de HaGRID + mediapipe detector
+# Requiere: imÃ¡genes de HaGRID + mediapipe detector
 ```
 
 **Script necesario** (crear):
 ```python
-# src/procesar_landmarks_hagrid_mediapipe.py
-# Lee imágenes dataset/images/hagrid/*
-# Extrae 21 landmarks per imagen → data/processed/landmarks/hagrid_gesture_imageid.npy
+# src/preprocessing/procesar_landmarks_hagrid_mediapipe.py
+# Lee imÃ¡genes dataset/images/hagrid/*
+# Extrae 21 landmarks per imagen â†’ data/processed/landmarks/hagrid_gesture_imageid.npy
 ```
 
 **Output esperado**:
 ```
 data/processed/landmarks/
-├─ freihand_00000001.npy  (shape: 21×3)
-├─ freihand_00000002.npy
-├─ hagrid_ok_image001.npy
-└─ ...
+â”œâ”€ freihand_00000001.npy  (shape: 21Ã—3)
+â”œâ”€ freihand_00000002.npy
+â”œâ”€ hagrid_ok_image001.npy
+â””â”€ ...
 ```
 
-**Nota**: Para este MVP, si no tienen imágenes completas de HaGRID, pueden usar solo FreiHAND landmarks.
+**Nota**: Para este MVP, si no tienen imÃ¡genes completas de HaGRID, pueden usar solo FreiHAND landmarks.
 
 ---
 
-### [FASE 3] Balanceo con Información MST
+### [FASE 3] Balanceo con InformaciÃ³n MST
 
 **Objetivo**: Generar manifiesto balanceado con cuotas MST.
 
 **Comandos**:
 
 ```bash
-# Básico (sin MST):
-uv run python src/balancear_freihand_hagrid.py \
+# BÃ¡sico (sin MST):
+uv run python src/balancer/balancear_freihand_hagrid.py \
   --output-csv output/train_manifest_balanceado_freihand_hagrid.csv \
   --output-summary output/resumen_balanceo_freihand_hagrid.json
 
-# Con información MST (Phase 1):
-uv run python src/balancear_freihand_hagrid.py \
+# Con informaciÃ³n MST (Phase 1):
+uv run python src/balancer/balancear_freihand_hagrid.py \
   --mst-csv csv/mst_classifications.csv \
   --output-csv output/train_manifest_balanceado_freihand_hagrid.csv \
   --output-summary output/resumen_balanceo_freihand_hagrid.json \
@@ -178,7 +178,7 @@ uv run python src/balancear_freihand_hagrid.py \
   --dark-jitter-factor 0.5
 
 # Con manifiesto ST-GCN (Phase 4):
-uv run python src/balancear_freihand_hagrid.py \
+uv run python src/balancer/balancear_freihand_hagrid.py \
   --mst-csv csv/mst_classifications.csv \
   --output-csv output/train_manifest_balanceado_freihand_hagrid.csv \
   --output-summary output/resumen_balanceo_freihand_hagrid.json \
@@ -196,9 +196,9 @@ hagrid_ok_image001,hagrid,ok,3,csv,train,claro
 
 ---
 
-### [FASE 4] Generación Manifiesto ST-GCN
+### [FASE 4] GeneraciÃ³n Manifiesto ST-GCN
 
-**Objetivo**: Integrar landmarks + balanceo → CSV lista para ST-GCN training.
+**Objetivo**: Integrar landmarks + balanceo â†’ CSV lista para ST-GCN training.
 
 **Output CSV** (ST-GCN format):
 ```csv
@@ -210,45 +210,45 @@ hagrid_ok_image001,data/processed/landmarks/hagrid_ok_image001.npy,ok,claro,hagr
 
 **Reproducibilidad**:
 - Seed: `--seed 42` (fijo, reproducible)
-- Summary JSON incluye: seed, configuración de sampling, estadísticas balanceo
-- Ejemplo: `output/resumen_balanceo_freihand_hagrid.json` (guarda configuración exacta)
+- Summary JSON incluye: seed, configuraciÃ³n de sampling, estadÃ­sticas balanceo
+- Ejemplo: `output/resumen_balanceo_freihand_hagrid.json` (guarda configuraciÃ³n exacta)
 
 ---
 
-## Plan de Implementación Paso a Paso
+## Plan de ImplementaciÃ³n Paso a Paso
 
-### Semana 1: MVP Básico (Sin Imágenes de MST)
+### Semana 1: MVP BÃ¡sico (Sin ImÃ¡genes de MST)
 
-1. ✅ **Crear script de clasificación MST** (`src/clasificar_mst_mediapipe.py`)
-2. **Ejecutar balanceo básico** (sin MST, solo 50-50 FreiHAND/HaGRID)
+1. âœ… **Crear script de clasificaciÃ³n MST** (`src/classification/clasificar_mst_mediapipe.py`)
+2. **Ejecutar balanceo bÃ¡sico** (sin MST, solo 50-50 FreiHAND/HaGRID)
    ```bash
-   uv run python src/balancear_freihand_hagrid.py
+   uv run python src/balancer/balancear_freihand_hagrid.py
    ```
-3. **Generar landmarks FreiHAND** (convertir `training_xyz.json` → `.npy` individual)
-4. **Generar manifiesto ST-GCN** básico (sin MST por tono, pero con estructura)
+3. **Generar landmarks FreiHAND** (convertir `training_xyz.json` â†’ `.npy` individual)
+4. **Generar manifiesto ST-GCN** bÃ¡sico (sin MST por tono, pero con estructura)
 
-### Semana 2: Integración MST
+### Semana 2: IntegraciÃ³n MST
 
-1. **Procesar imágenes de entrenamiento** (si están disponibles)
+1. **Procesar imÃ¡genes de entrenamiento** (si estÃ¡n disponibles)
    ```bash
    for img in data/raw/images/*.jpg; do
-     uv run python src/clasificar_mst_mediapipe.py "$img"
+     uv run python src/classification/clasificar_mst_mediapipe.py "$img"
    done > csv/mst_classifications.csv
    ```
 2. **Ejecutar balanceo con MST**
    ```bash
-   uv run python src/balancear_freihand_hagrid.py --mst-csv csv/mst_classifications.csv ...
+   uv run python src/balancer/balancear_freihand_hagrid.py --mst-csv csv/mst_classifications.csv ...
    ```
-3. **Validar distribución MST** con gráficos
+3. **Validar distribuciÃ³n MST** con grÃ¡ficos
    ```bash
-   uv run python src/generar_graficos_balanceo.py
+   uv run python src/balancer/generar_graficos_balanceo.py
    ```
 
 ### Semana 3: Entrenamiento ST-GCN
 
 1. **Usar manifiesto ST-GCN para training**
 2. **Validar convergencia por tono de piel**
-3. **Evaluar sesgos en métricas por MST**
+3. **Evaluar sesgos en mÃ©tricas por MST**
 
 ---
 
@@ -256,33 +256,34 @@ hagrid_ok_image001,data/processed/landmarks/hagrid_ok_image001.npy,ok,claro,hagr
 
 | Archivo | Status | Notas |
 |---------|--------|-------|
-| `src/clasificar_mst_mediapipe.py` | ✅ Creado | Listo para ejecutar |
-| `src/balancear_freihand_hagrid.py` | ✅ Existente | Probado |
-| `src/procesar_landmarks_freihand.py` | ❌ Falta | Prioridad media |
-| `src/procesar_landmarks_hagrid_mediapipe.py` | ❌ Falta | Prioridad media |
-| `models/hand_landmarker.task` | ✅ Existe | Modelo MediaPipe |
-| `datasets/training_xyz.json` | ✅ Existe | FreiHAND data |
-| `datasets/ann_subsample/` | ✅ Existe | HaGRID anotaciones |
-| `data/raw/images/` | ❌ Falta | Imágenes a procesar (opcional) |
-| `data/processed/landmarks/` | ❌ Falta | Output landmarks .npy |
+| `src/classification/clasificar_mst_mediapipe.py` | âœ… Creado | Listo para ejecutar |
+| `src/balancer/balancear_freihand_hagrid.py` | âœ… Existente | Probado |
+| `src/preprocessing/procesar_landmarks_freihand.py` | âŒ Falta | Prioridad media |
+| `src/preprocessing/procesar_landmarks_hagrid_mediapipe.py` | âŒ Falta | Prioridad media |
+| `models/hand_landmarker.task` | âœ… Existe | Modelo MediaPipe |
+| `datasets/training_xyz.json` | âœ… Existe | FreiHAND data |
+| `datasets/ann_subsample/` | âœ… Existe | HaGRID anotaciones |
+| `data/raw/images/` | âŒ Falta | ImÃ¡genes a procesar (opcional) |
+| `data/processed/landmarks/` | âŒ Falta | Output landmarks .npy |
 
 ---
 
-## Recomendación Inmediata
+## RecomendaciÃ³n Inmediata
 
-**Opción A: MVP Rápido (hoy)**
+**OpciÃ³n A: MVP RÃ¡pido (hoy)**
 ```bash
 # Sin MST, sin landmarks procesados
-# Solo genera manifiesto CSV balanceado básico
-uv run python src/balancear_freihand_hagrid.py \
+# Solo genera manifiesto CSV balanceado bÃ¡sico
+uv run python src/balancer/balancear_freihand_hagrid.py \
   --output-csv output/train_manifest_balanceado_freihand_hagrid.csv \
   --output-summary output/resumen_balanceo_freihand_hagrid.json
 ```
 
-**Opción B: Completo (con landmarks FreiHAND)**
+**OpciÃ³n B: Completo (con landmarks FreiHAND)**
 ```bash
-# Requiere: crear src/procesar_landmarks_freihand.py
+# Requiere: crear src/preprocessing/procesar_landmarks_freihand.py
 # Luego generar manifiesto ST-GCN
 ```
 
-¿Cuál prefieres primero?
+Â¿CuÃ¡l prefieres primero?
+

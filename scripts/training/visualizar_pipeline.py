@@ -192,8 +192,8 @@ def visualizar_pipeline():
        - HaGRID: 10,000 referencias pero sin archivos
        - Propuesta: Investigar path de HaGRID
     
-    3. ONE-HAND LIMITATION: MediaPipe configurado con num_hands=1
-       - Ubicación: src/procesar_landmarks_hagrid_mediapipe.py:32
+     3. ONE-HAND LIMITATION: MediaPipe configurado con num_hands=1
+         - Ubicación: src/preprocessing/procesar_landmarks_hagrid_mediapipe.py:32
        - Impacto: Gestos dos manos perderían info
        - Solución: Regenerar con num_hands=2 → shape (42, 3)
     

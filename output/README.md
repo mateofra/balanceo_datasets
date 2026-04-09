@@ -1,43 +1,19 @@
-# 📤 Salidas del Proyecto
+# Salidas del proyecto
 
-Este directorio contiene todos los outputs generados por los scripts.
+Estructura oficial de artefactos por finalidad.
 
-## 📂 Subdirectorios
+## Subdirectorios oficiales
 
-### manifests/
-Manifiestos CSV para training:
-- `train_manifest_stgcn*.csv` - Manifiestos para ST-GCN
-- `train_manifest_balanceado*.csv` - Manifiestos con balanceo por MST
+- `output/balanceo/`: manifiestos balanceados y resumentes de cuotas MST.
+- `output/training/`: manifiestos ST-GCN, historiales y checkpoints.
+- `output/auditoria/`: resultados de auditoria DPR/TVD y figuras derivadas.
 
-### reports/
-Reportes y análisis:
-- `reporte_graficos_balanceo.md` - Reporte con visualizaciones
-- `diagnostico_normalizacion.json` - Diagnóstico de normalización
-- `resumen_balanceo*.json` - Resúmenes de balanceo por dataset
+## Legacy
 
-### graphics/
-Gráficos y visualizaciones (PNG, PDF):
-- Distribuciones por tono MST
-- Proporciones FreiHAND vs HaGRID
-- Histogramas de clases
+- `output/balanceo/legacy/` y `output/training/legacy/` contienen artefactos historicos reubicados.
+- Se conservan solo para trazabilidad y comparacion, no como fuente principal.
 
-### training_logs/
-Logs de entrenamiento y checkpoints:
-- Logs de tensorboard
-- Checkpoints de modelos
-- Métricas de training
+## Regla de oro
 
-## 🚀 Uso
-
-Los scripts escriben automáticamente aquí:
-```bash
-python scripts/generate/generar_graficos_balanceo.py
-# Salida: output/graphics/*.png
-
-python scripts/diagnosis/diagnosticar_normalizacion.py
-# Salida: output/reports/diagnostico_normalizacion.json
-```
-
-## 📌 Nota
-
-Algunos archivos (.npy grandes) pueden estar en `.gitignore` pero los manifiestos CSV deben commitarse.
+- Nuevos artefactos deben escribirse en una de las tres carpetas oficiales.
+- Evitar dejar archivos sueltos en la raiz de `output/`.

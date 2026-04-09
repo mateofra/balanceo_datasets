@@ -9,8 +9,7 @@ wheels/
 # Virtual environments
 .venv
 
-
-# Dataset directory
+# Local datasets and intermediates (regenerables)
 /datasets/
 /data/
 /stgcn/data/

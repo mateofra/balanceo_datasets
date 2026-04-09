@@ -4,7 +4,7 @@ Procesa landmarks de HaGRID usando MediaPipe Hand Landmarker.
 Pipeline:
 1. Cargar imágenes de HaGRID desde data/raw/images/
 2. Para cada imagen, detectar landmarks con MediaPipe
-3. Guardar como data/processed/landmarks/hagrid_gesture_imageid.npy (21x3)
+3. Guardar como data/processed/landmarks/hagrid/<gesture>/<image_id>.npy (21x3)
 4. Generar mapeo sample_id → path_landmarks
 """
 
@@ -95,14 +95,12 @@ def process_hagrid_images(
 
     for idx, image_path in enumerate(image_files):
         try:
-            # Generar sample_id desde estructura del archivo
-            # Ej: gesture/image.jpg → hagrid_gesture_image
+            # Generar sample_id compatible con anotaciones HaGRID.
+            # Ej: gesture/<uuid>.jpg -> sample_id=<uuid>
             relative = image_path.relative_to(images_dir)
             parts = relative.parts
             gesture = parts[0] if len(parts) > 1 else "unknown"
-            filename = relative.stem
-
-            sample_id = f"hagrid_{gesture}_{filename}"
+            sample_id = relative.stem.strip().lower()
 
             landmarks = processor.extract_landmarks(image_path)
             if landmarks is None:
@@ -111,8 +109,9 @@ def process_hagrid_images(
                     print(f"  ⚠ {failed} imágenes sin detección de mano")
                 continue
 
-            # Guardar .npy
-            output_file = output_dir / f"{sample_id}.npy"
+            # Guardar .npy en estructura jerárquica por gesto.
+            output_file = output_dir / "hagrid" / gesture / f"{sample_id}.npy"
+            output_file.parent.mkdir(parents=True, exist_ok=True)
             np.save(output_file, landmarks)
 
             # Mapeo

@@ -15,7 +15,7 @@ from tqdm import tqdm
 def generar_secuencia_sintetica(
     landmarks_estaticos: np.ndarray,  # shape (21, 3)
     T: int = 16,
-    sigma_ruido: float = 0.002        # ~2mm en coordenadas normalizadas
+    sigma_ruido: float = 0.015        # ruido motor más alto, pero aún suave
 ) -> np.ndarray:
     """
     Construye una secuencia temporal sintética desde un frame estático.

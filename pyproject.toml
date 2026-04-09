@@ -9,7 +9,16 @@ dependencies = [
     "mediapipe>=0.10.33",
     "numpy>=2.4.3",
     "opencv-python>=4.13.0.92",
+    "pandas>=3.0.2",
     "tensorboard>=2.20.0",
     "torch>=2.11.0",
     "tqdm>=4.67.3",
 ]
+
+[[tool.uv.index]]
+name = "pytorch-cu126"
+url = "https://download.pytorch.org/whl/cu126"
+explicit = true
+
+[tool.uv.sources]
+torch = { index = "pytorch-cu126" }
