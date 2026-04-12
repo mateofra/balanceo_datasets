@@ -1,0 +1,33 @@
+{
+  "samples_evaluated": 9310,
+  "overall_acc": 0.8234156820622986,
+  "by_mst_block": {
+    "claro": {
+      "total": 2582,
+      "correct": 2152,
+      "acc": 0.8334624322230829
+    },
+    "medio": {
+      "total": 3179,
+      "correct": 2654,
+      "acc": 0.8348537275872916
+    },
+    "oscuro": {
+      "total": 3549,
+      "correct": 2860,
+      "acc": 0.8058608058608059
+    }
+  },
+  "by_mst_origin": {
+    "imputed": {
+      "total": 9303,
+      "correct": 7659,
+      "acc": 0.8232828119961303
+    },
+    "original": {
+      "total": 7,
+      "correct": 7,
+      "acc": 1.0
+    }
+  }
+}

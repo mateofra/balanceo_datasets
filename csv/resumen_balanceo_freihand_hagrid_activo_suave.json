@@ -1,0 +1,62 @@
+{
+  "seed": 42,
+  "sampling_config": {
+    "extreme_mst_levels": [
+      1,
+      2,
+      3,
+      10
+    ],
+    "extreme_factor": 3.0,
+    "dark_jitter_factor": 0.2
+  },
+  "summary": {
+    "total_samples": 20580,
+    "by_source": {
+      "hagrid": 10289,
+      "freihand": 10291
+    },
+    "by_gesture": {
+      "palm": 579,
+      "unknown": 10291,
+      "ok": 589,
+      "fist": 528,
+      "like": 545,
+      "three": 597,
+      "stop_inverted": 602,
+      "dislike": 559,
+      "call": 590,
+      "two_up_inverted": 558,
+      "peace_inverted": 594,
+      "two_up": 573,
+      "three2": 581,
+      "one": 583,
+      "peace": 589,
+      "rock": 580,
+      "mute": 538,
+      "four": 506,
+      "stop": 598
+    },
+    "by_mst_block": {
+      "claro": 6666,
+      "oscuro": 7248,
+      "medio": 6666
+    },
+    "by_mst_level": {
+      "1": 2004,
+      "2": 2095,
+      "3": 1847,
+      "4": 720,
+      "5": 2208,
+      "6": 2394,
+      "7": 2064,
+      "8": 1867,
+      "9": 1613,
+      "10": 3768
+    },
+    "by_mst_origin": {
+      "imputed": 18134,
+      "original": 2446
+    }
+  }
+}

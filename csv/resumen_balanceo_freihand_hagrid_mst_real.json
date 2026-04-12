@@ -1,0 +1,47 @@
+{
+  "seed": 42,
+  "sampling_config": {
+    "extreme_mst_levels": [
+      1,
+      2,
+      3,
+      10
+    ],
+    "extreme_factor": 2.0,
+    "dark_jitter_factor": 0.0
+  },
+  "summary": {
+    "total_samples": 20000,
+    "by_source": {
+      "freihand": 10000,
+      "hagrid": 10000
+    },
+    "by_gesture": {
+      "unknown": 10000,
+      "fist": 3253,
+      "palm": 6747
+    },
+    "by_mst_block": {
+      "claro": 3333,
+      "sin_mst": 10000,
+      "medio": 3333,
+      "oscuro": 3334
+    },
+    "by_mst_level": {
+      "1": 214,
+      "2": 508,
+      "3": 67,
+      "4": 2544,
+      "5": 956,
+      "6": 1375,
+      "7": 1002,
+      "8": 3010,
+      "9": 304,
+      "10": 20
+    },
+    "by_mst_origin": {
+      "original": 10000,
+      "missing": 10000
+    }
+  }
+}

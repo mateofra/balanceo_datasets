@@ -302,3 +302,38 @@ uv run python src/balancer/generar_graficos_balanceo.py \
 - Distribución MST (claro/medio/oscuro)
 - Histogramas de gestos
 - Reporte: `output/graphics/reporte_graficos_balanceo.md`
+
+---
+
+## 📅 Roadmap y Estado Actual del Sprint (KPNBODY26)
+
+Este segmento documenta el progreso de las fases planificadas para el sprint en curso, rindiendo cuentas sobre su éxito e iterando de manera continua sobre los cuellos de botella tecnológicos de la arquitectura actual para priorizar futuras correcciones. 
+
+### ✅ Fases Estables e Implementadas
+
+- **Fase 0/0.1 (Obtención y Evaluación de Datasets)**: 
+  Completada exitosamente. Se integraron `FreiHAND` y `HaGRID`. Se descubrió la deficiencia masiva (problema fenotípico "WEIRD") respecto a las sub-menciones en los estratos de piel de grados extremos (**MST 1 al 3 y predominantemente MST 10**) en las anotaciones reales analizadas.
+- **Fase 0.2 (Balanceo de Datasets)**: 
+  Completada exitosamente. Se encapsuló la abstracción de muestreo en un pipeline estricto (OOP), induciendo equidad del `50%` contra el `50%` cruzado de datasets y estableciendo robustamente una cuota racial de tres tercios para bloques de Tono de Piel (Claro 33%, Medio 33%, Oscuro 33%) mediante un _oversampling_ y parametrización asimétrica. 
+- **Fase 2 y 4 (Parcial - Modelado ST-GCN y Auditoría DPR)**: 
+  La fase de extracción referencial probabilística (_Demographic Parity Ratio_) computada en `auditoria_dpr.py` calcula fiablemente las métricas iniciales sesgadas. Adicionalmente, el tensor raíz de consumo de datos (`st_gcn_dataloader.py`) está funcional junto al modelo generador base.
+
+### 🔄 Fases Pendientes y Pipeline Iterativo (Mejora Continua)
+
+Las siguientes fases exhiben manifiestas diferencias entre su ideal técnico en el documento rector y la cruda implementación material existente en el código. Se enlistan a continuación trazando la hoja de ruta correctiva para ser atendida y perfeccionada:
+
+- **Iteración para Fase 1 (Transición de Síntesis Estadística a MANO / SMPL-X)**
+  > *Estado Factual:* Actualmente, la base temporal de tu script sintético de relleno (`generate_synthetic_landmarks.py`) **NO** emplea un andamiaje jerarquizado oficial de `MANO` (Kinema). En lugar de ello aproxima tensores agregando ruido pseudo-Gausiano sobre medias posicionales arrojadas por estequiometría superficial desde `MediaPipe`.
+  > *Mejora a Pipeline:* Modificar e integrar el core framework `smplx` en PyTorch. Renderizar de base mallas topológicas manipulando asertivamente los parámetros esqueléticos de _Pose_ $(\theta)$ y de _Forma_ anatómica $(\beta)$ dotando de hiperrealismo orgánico a los landmarks sintéticos en piel oscura.
+
+- **Iteración para Fase 1.1 (Reestructuración Hiper-Secuencial $T=1 \to T=10$)**
+  > *Estado Factual:* El `Dataloader` traga todo el modelado como un vector estático para instantes dislocados y ahueca el _frame time_ a uno (expansión manual $T=1$).
+  > *Mejora a Pipeline:* Modificar en tiempo de pre-procesado las secuencias inyectando micro-temblores dinámicos empleando _Random Walk_ inter-frame interpolatorio sobre un mínimo de `10 frames`.
+
+- **Iteración para Fase 3 (Adversarial Branching - *FairGenderGen*)**
+  > *Estado Factual:* El código ST-GCN original ignora capas de castigo o inversión de gradiente algorítmico.
+  > *Mejora a Pipeline:* Inyectar sobre el autómata extractor de `stgcn_model.py` una capa adicional conectada por medio de una capa inversora de retorno (*GRL - Gradient Reversal Layer*). Entrenaremos un módulo "adversario" intentando inferir fenotipos demográficos. Al fallar el GRL en reversa el modelo forzará al autómata central a ser cinemáticamente daltónico para extraer solo *landmarks funcionales*, neutralizando envenenamientos fenotípicos de forma profunda.
+
+- **Iteración para Fase 4 (Concreción de Divergencia TVD - Total Variation Distance)**
+  > *Estado Factual:* Careciste de implementación directa empírica de TVD.
+  > *Mejora a Pipeline:* A través de derivadas espaciales de los puntos cinemático del frame, modelar perfiles probabilísticos de densidad poblacional aislando clases `Claro` y clases `Oscuro`. Cotejarlas analíticamente entre sí midiendo traslape en áreas para obtener coeficientes reales TVD.

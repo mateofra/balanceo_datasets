@@ -85,6 +85,21 @@ def parse_args() -> argparse.Namespace:
             "Por defecto el script falla para forzar composiciones con imagen real."
         ),
     )
+    parser.add_argument(
+        "--tone-strategy",
+        choices=["manifest", "image"],
+        default="image",
+        help=(
+            "Estrategia para elegir muestras por tono: 'manifest' usa condition del CSV; "
+            "'image' infiere tono desde la imagen original (recomendado cuando MST fue imputado)."
+        ),
+    )
+    parser.add_argument(
+        "--freihand-k-json",
+        type=Path,
+        default=Path("datasets/FreiHAND_pub_v2/training_K.json"),
+        help="Ruta a training_K.json para proyectar XYZ de FreiHAND en pixeles.",
+    )
     return parser.parse_args()
 
 
@@ -337,6 +352,89 @@ def select_row_for_tone(df: pd.DataFrame, tone: str) -> pd.Series:
     return subset.iloc[0]
 
 
+def _sample_idx_from_freihand_id(sample_id: str) -> int | None:
+    if not sample_id.startswith("freihand_"):
+        return None
+    raw_idx = sample_id.split("_", 1)[1]
+    if not raw_idx.isdigit():
+        return None
+    return int(raw_idx)
+
+
+def _load_freihand_k(path: Path) -> list[np.ndarray] | None:
+    if not path.exists():
+        return None
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(payload, list):
+        return None
+    mats: list[np.ndarray] = []
+    for item in payload:
+        arr = np.asarray(item, dtype=np.float32)
+        if arr.shape == (3, 3):
+            mats.append(arr)
+    return mats if mats else None
+
+
+def _project_xyz_freihand(frame_xyz: np.ndarray, k: np.ndarray) -> np.ndarray:
+    z = np.clip(frame_xyz[:, 2], 1e-6, None)
+    u = k[0, 0] * (frame_xyz[:, 0] / z) + k[0, 2]
+    v = k[1, 1] * (frame_xyz[:, 1] / z) + k[1, 2]
+    return np.stack([u, v], axis=1).astype(np.float32)
+
+
+def _project_generic_xy(frame_xyz: np.ndarray, image_h: int, image_w: int) -> np.ndarray:
+    coords = frame_xyz[:, :2].astype(np.float32).copy()
+    if float(coords.max()) <= 2.0 and float(coords.min()) >= -1.0:
+        coords[:, 0] *= image_w
+        coords[:, 1] *= image_h
+    return coords
+
+
+def _infer_tone_from_image(
+    sample_id: str,
+    seq: np.ndarray,
+    image: np.ndarray,
+    freihand_k: list[np.ndarray] | None,
+) -> str:
+    h, w = image.shape[:2]
+    frame_xyz = seq[-1].astype(np.float32)
+
+    idx = _sample_idx_from_freihand_id(sample_id)
+    if idx is not None and freihand_k is not None and idx < len(freihand_k):
+        coords = _project_xyz_freihand(frame_xyz, freihand_k[idx])
+    else:
+        coords = _project_generic_xy(frame_xyz, h, w)
+
+    vals: list[float] = []
+    for x, y in coords:
+        xi = int(round(float(x)))
+        yi = int(round(float(y)))
+        if xi < 0 or yi < 0 or xi >= w or yi >= h:
+            continue
+        x0 = max(0, xi - 2)
+        x1 = min(w, xi + 3)
+        y0 = max(0, yi - 2)
+        y1 = min(h, yi + 3)
+        patch = image[y0:y1, x0:x1]
+        if patch.size == 0:
+            continue
+        patch = patch.astype(np.float32)
+        if patch.max() > 1.5:
+            patch = patch / 255.0
+        luma = 0.2126 * patch[..., 0] + 0.7152 * patch[..., 1] + 0.0722 * patch[..., 2]
+        vals.append(float(np.median(luma)))
+
+    if not vals:
+        return "medio"
+
+    score = float(np.median(np.asarray(vals, dtype=np.float32)))
+    if score >= 0.58:
+        return "claro"
+    if score >= 0.44:
+        return "medio"
+    return "oscuro"
+
+
 def frame_from_index(seq: np.ndarray, frame_index: int) -> np.ndarray:
     idx = frame_index
     if idx < 0:
@@ -354,6 +452,7 @@ def main() -> int:
     checkpoint_path = (ROOT / args.checkpoint).resolve()
     output_dir = (ROOT / args.output_dir).resolve()
     image_roots = [(ROOT / Path(p)).resolve() for p in args.image_roots]
+    freihand_k = _load_freihand_k((ROOT / args.freihand_k_json).resolve())
 
     if not manifest_path.exists():
         raise FileNotFoundError(f"No existe manifiesto: {manifest_path}")
@@ -372,6 +471,46 @@ def main() -> int:
 
     for tone in args.tones:
         row = select_row_for_tone(df, tone)
+
+        if args.tone_strategy == "image":
+            candidates = df.copy()
+            candidates["dataset_priority"] = candidates["dataset"].map(
+                lambda value: 0 if str(value).lower() == "freihand" else 1
+            )
+            candidates = candidates.sort_values(["dataset_priority", "sample_id"]).reset_index(drop=True)
+
+            inspected = 0
+            selected = None
+            for _, cand in candidates.iterrows():
+                seq_path_c = Path(str(cand["seq_path"]))
+                if not seq_path_c.exists():
+                    continue
+                image_path_c = find_original_image(
+                    sample_id=str(cand["sample_id"]),
+                    label=str(cand["label"]),
+                    image_roots=image_roots,
+                )
+                if image_path_c is None or not image_path_c.exists():
+                    continue
+
+                seq_c = np.load(seq_path_c).astype(np.float32)
+                img_c = plt.imread(image_path_c)
+                inferred = _infer_tone_from_image(
+                    sample_id=str(cand["sample_id"]),
+                    seq=seq_c,
+                    image=img_c,
+                    freihand_k=freihand_k,
+                )
+                inspected += 1
+                if inferred == tone:
+                    selected = cand
+                    break
+                if inspected >= 2500:
+                    break
+
+            if selected is not None:
+                row = selected
+
         seq_path = Path(str(row["seq_path"]))
         seq = np.load(seq_path).astype(np.float32)  # (T, 21, 3)
 
@@ -423,6 +562,7 @@ def main() -> int:
         metadata.append(
             {
                 "tone": tone,
+                "tone_strategy": args.tone_strategy,
                 "sample_id": str(row["sample_id"]),
                 "seq_path": str(seq_path),
                 "original_image_path": str(original_image_path) if original_image_path else None,

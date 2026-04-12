@@ -1,0 +1,64 @@
+{
+  "timestamp": "2026-04-11T13:43:05.900472",
+  "config": {
+    "epochs": 10,
+    "batch_size": 32,
+    "learning_rate": 0.001,
+    "num_classes": 19,
+    "num_samples": 20000,
+    "model": "STGCNWithAttention",
+    "attention_mechanism": "SpatialAttention"
+  },
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 1.5674807201385499,
+      "train_accuracy": 50.68
+    },
+    {
+      "epoch": 2,
+      "train_loss": 1.3962578412532807,
+      "train_accuracy": 54.19
+    },
+    {
+      "epoch": 3,
+      "train_loss": 0.8050258697748184,
+      "train_accuracy": 68.95
+    },
+    {
+      "epoch": 4,
+      "train_loss": 0.6433024466514587,
+      "train_accuracy": 74.17
+    },
+    {
+      "epoch": 5,
+      "train_loss": 0.5838668497085572,
+      "train_accuracy": 76.62
+    },
+    {
+      "epoch": 6,
+      "train_loss": 0.5420899343252182,
+      "train_accuracy": 77.96
+    },
+    {
+      "epoch": 7,
+      "train_loss": 0.5169311111927033,
+      "train_accuracy": 79.445
+    },
+    {
+      "epoch": 8,
+      "train_loss": 0.4994831478595734,
+      "train_accuracy": 80.385
+    },
+    {
+      "epoch": 9,
+      "train_loss": 0.4883484912633896,
+      "train_accuracy": 80.855
+    },
+    {
+      "epoch": 10,
+      "train_loss": 0.47762798556089403,
+      "train_accuracy": 81.33
+    }
+  ]
+}

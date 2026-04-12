@@ -1,0 +1,16 @@
+{
+  "freihand": {
+    "total": 10000,
+    "with_image": 10000,
+    "classified": 10000,
+    "missing_image": 0,
+    "errors": 0
+  },
+  "hagrid": {
+    "total": 10000,
+    "with_image": 35,
+    "classified": 35,
+    "missing_image": 9965,
+    "errors": 0
+  }
+}
