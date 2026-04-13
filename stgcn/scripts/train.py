@@ -255,7 +255,7 @@ def main():
     print(f"Modelo: {final_path}")
     print(f"Log: {log_path}")
     print(f"\nProximo paso:")
-    print(f"  python scripts/analyze_fairness.py {log_path}")
+    print(f"  uv run python scripts/analyze_fairness.py {log_path}")
 
 
 if __name__ == "__main__":

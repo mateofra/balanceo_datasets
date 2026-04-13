@@ -22,6 +22,6 @@ Scripts para reparar manifiestos y consistencia de datos.
 ## Uso
 
 ```bash
-python repair_manifest.py input.csv --output output.csv
-python check_npy_shape.py data/processed/landmarks/
+uv run python repair_manifest.py input.csv --output output.csv
+uv run python check_npy_shape.py data/processed/landmarks/
 ```

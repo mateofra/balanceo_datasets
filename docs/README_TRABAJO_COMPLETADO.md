@@ -94,7 +94,7 @@ np.ndarray shape (21, 3)  # float32
 ### Paso 1: Validar Setup
 ```bash
 cd st_gcn_training_starter
-python scripts/validate_setup.py
+uv run python scripts/validate_setup.py
 ```
 
 Verifica:
@@ -105,7 +105,7 @@ Verifica:
 
 ### Paso 2: Entrenar Modelo
 ```bash
-python scripts/train.py
+uv run python scripts/train.py
 ```
 
 Entrena **ST-GCN** con:
@@ -116,7 +116,7 @@ Entrena **ST-GCN** con:
 
 ### Paso 3: Ver Resultados
 ```bash
-python scripts/analyze_fairness.py logs/training_log_final.json
+uv run python scripts/analyze_fairness.py logs/training_log_final.json
 ```
 
 Output:
@@ -157,8 +157,8 @@ Output:
 
 | Caso | Comando |
 |------|---------|
-| Prueba rápida (30 seg) | `python scripts/train.py --num-epochs 1` |
-| Setup de GPU | `python scripts/train.py --device cuda --batch-size 128` |
+| Prueba rápida (30 seg) | `uv run python scripts/train.py --num-epochs 1` |
+| Setup de GPU | `uv run python scripts/train.py --device cuda --batch-size 128` |
 | Cambiar hiperparámetros | Editar `config/default_config.yaml` |
 | Usar datos propios | Adaptar formato CSV + links de datos |
 | Export modelo | Ver `INSTALL.md` sección "Export" |
@@ -293,8 +293,8 @@ torch.manual_seed(42)
 
 ```bash
 cd st_gcn_training_starter
-python scripts/validate_setup.py
-python scripts/train.py
+uv run python scripts/validate_setup.py
+uv run python scripts/train.py
 ```
 
 **Resultado**: Modelo entrenado + fairness validado en ~15 minutos.
@@ -314,8 +314,8 @@ python scripts/train.py
 ### Setup y Ejecución
 1. Lee: `INFORME_USO_STARTER_PACK.md`
 2. Ve a: `stgcn/`
-3. Ejecuta: `python scripts/validate_setup.py`
-4. Entrena: `python scripts/train.py`
+3. Ejecuta: `uv run python scripts/validate_setup.py`
+4. Entrena: `uv run python scripts/train.py`
 
 ---
 

@@ -14,10 +14,10 @@
 pip install -r requirements.txt
 
 # 2.Validar setup
-python scripts/validate_setup.py
+uv run python scripts/validate_setup.py
 
 # 3. Entrenar
-python scripts/train.py
+uv run python scripts/train.py
 ```
 
 ## Opción 2: Setup con `uv` (más rápido)
@@ -36,8 +36,8 @@ source .venv/bin/activate  # Linux/Mac
 uv pip install -r requirements.txt
 
 # 4. Validar y entrenar
-python scripts/validate_setup.py
-python scripts/train.py
+uv run python scripts/validate_setup.py
+uv run python scripts/train.py
 ```
 
 ## Opción 3: GPU (CUDA)
@@ -56,14 +56,14 @@ uv pip install --force-reinstall torch --index-url https://download.pytorch.org/
 Luego:
 
 ```bash
-python scripts/train.py --device cuda --batch-size 128
+uv run python scripts/train.py --device cuda --batch-size 128
 ```
 
 ## Verificar Instalación
 
 ```bash
-python -c "import torch; print(f'PyTorch: {torch.__version__}')"
-python -c "import torch; print(f'CUDA disponible: {torch.cuda.is_available()}')"
+uv run python -c "import torch; print(f'PyTorch: {torch.__version__}')"
+uv run python -c "import torch; print(f'CUDA disponible: {torch.cuda.is_available()}')"
 ```
 
 ## Troubleshooting
@@ -79,21 +79,21 @@ pip install torch numpy tqdm
 
 ```bash
 # Reducir batch size
-python scripts/train.py --batch-size 16
+uv run python scripts/train.py --batch-size 16
 ```
 
 ### "Datos no encontrados"
 
 ```bash
-python scripts/validate_setup.py
+uv run python scripts/validate_setup.py
 # Ver qué falta y ajustar paths en config/default_config.yaml
 ```
 
 ## Próximo Paso
 
 ```bash
-python scripts/validate_setup.py
-python scripts/train.py
+uv run python scripts/validate_setup.py
+uv run python scripts/train.py
 ```
 
 ¡Listo! Ver `GUIA_RAPIDA.md` para detalles.

@@ -36,13 +36,13 @@
 
 ```bash
 # 1. VALIDAR
-python scripts/validate_setup.py
+uv run python scripts/validate_setup.py
 
 # 2. ENTRENAR
-python scripts/train.py
+uv run python scripts/train.py
 
 # 3. ANALIZAR (opcional)
-python scripts/analyze_fairness.py logs/training_log_final.json
+uv run python scripts/analyze_fairness.py logs/training_log_final.json
 ```
 
 ---
@@ -64,16 +64,16 @@ python scripts/analyze_fairness.py logs/training_log_final.json
 pip install -r requirements.txt
 
 # Validar
-python scripts/validate_setup.py
+uv run python scripts/validate_setup.py
 
 # Training (CPU, ~10 min)
-python scripts/train.py
+uv run python scripts/train.py
 
 # Training (GPU, ~2 min)
-python scripts/train.py --device cuda --batch-size 128
+uv run python scripts/train.py --device cuda --batch-size 128
 
 # Prueba rápida (30 seg)
-python scripts/train.py --num-epochs 1 --batch-size 64
+uv run python scripts/train.py --num-epochs 1 --batch-size 64
 ```
 
 ---
@@ -99,17 +99,17 @@ Ver: `data/README.md` para instrucciones de descarga/copia
    pip install -r requirements.txt
    ↓
 2. VALIDAR
-   python scripts/validate_setup.py ← Ver que todo OK
+   uv run python scripts/validate_setup.py ← Ver que todo OK
    ↓
 3. ENTRENAR
-   python scripts/train.py ← Training automático
+   uv run python scripts/train.py ← Training automático
    ↓
 4. VER RESULTADOS
    logs/checkpoints/model_final.pth ← Modelo guardado
    logs/training_log_final.json ← Métricas
    ↓
 5. ANÁLISIS (OPCIONAL)
-   python scripts/analyze_fairness.py logs/training_log_final.json
+   uv run python scripts/analyze_fairness.py logs/training_log_final.json
 ```
 
 ---
@@ -129,7 +129,7 @@ DEVICE: "cpu"         # Cambiar a "cuda" si tienes GPU
 Pasar argumentos CLI:
 
 ```bash
-python scripts/train.py --batch-size 64 --num-epochs 30 --learning-rate 0.0005
+uv run python scripts/train.py --batch-size 64 --num-epochs 30 --learning-rate 0.0005
 ```
 
 ---

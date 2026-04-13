@@ -28,7 +28,7 @@ Este directorio contiene todo lo necesario para:
 
 ```bash
 # Desde dentro de stgcn/
-python scripts/validate_setup.py
+uv run python scripts/validate_setup.py
 ```
 
 Verifica:
@@ -40,7 +40,7 @@ Verifica:
 ### Paso 2: Ejecutar Training Básico
 
 ```bash
-python scripts/train.py --config config/default_config.yaml
+uv run python scripts/train.py --config config/default_config.yaml
 ```
 
 Output:
@@ -55,7 +55,7 @@ Output:
 tensorboard --logdir logs/tensorboard_logs
 
 # Opción B: Análisis de fairness por MST
-python scripts/analyze_fairness.py logs/training_log_final.json
+uv run python scripts/analyze_fairness.py logs/training_log_final.json
 ```
 
 ---
@@ -260,7 +260,7 @@ Fairness Report (Accuracy por Tono MST):
 
 | Problema | Solución |
 |----------|----------|
-| "File not found: manifest CSV" | Ejecutar `python scripts/validate_setup.py` primero |
+| "File not found: manifest CSV" | Ejecutar `uv run python scripts/validate_setup.py` primero |
 | "No module named torch" | `pip install torch` o `uv add torch` |
 | Out of Memory | Reducir `BATCH_SIZE` en config.yaml |
 | Training muy lento | `NUM_WORKERS` en config (solo Linux/Mac) |
@@ -326,7 +326,7 @@ for batch in train_loader:
 ### Exportar Modelo Final
 
 ```bash
-python scripts/export_model.py \
+uv run python scripts/export_model.py \
   --checkpoint logs/checkpoints/model_final.pth \
   --output model.onnx
 ```
@@ -345,5 +345,5 @@ Dudas sobre:
 **¡Listo para empezar?** 🚀
 
 ```bash
-python scripts/validate_setup.py
+uv run python scripts/validate_setup.py
 ```
