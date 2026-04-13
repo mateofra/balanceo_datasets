@@ -25,7 +25,7 @@ Scripts para generar graficas y reportes reproducibles.
 
 ```bash
 uv run python src/balancer/generar_graficos_balanceo.py --help
-python generar_grafica_auditoria_dpr.py
+uv run python generar_grafica_auditoria_dpr.py
 uv run python scripts/generate/visualizar_atencion_stgcn_mst.py
 uv run python scripts/generate/generar_grafica_stack_final.py
 ```

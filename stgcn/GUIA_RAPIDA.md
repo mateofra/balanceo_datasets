@@ -8,7 +8,7 @@
 
 ```bash
 # Desde directorio stgcn/
-python scripts/validate_setup.py
+uv run python scripts/validate_setup.py
 ```
 
 **Resultado esperado:**
@@ -58,13 +58,13 @@ x = batch["landmarks"].permute(0, 2, 1).unsqueeze(2)
 
 ```bash
 # Opción A: Con configuración por defecto
-python scripts/train.py
+uv run python scripts/train.py
 
 # Opción B: Con configuración personalizada
-python scripts/train.py --config config/examples/small_dataset.yaml
+uv run python scripts/train.py --config config/examples/small_dataset.yaml
 
 # Opción C: Con argumentos CLI
-python scripts/train.py --batch-size 16 --num-epochs 5 --learning-rate 0.0005
+uv run python scripts/train.py --batch-size 16 --num-epochs 5 --learning-rate 0.0005
 ```
 
 **Durante training verás:**
@@ -84,7 +84,7 @@ Después del training, verifica que **no haya sesgo** por tono:
 
 ```bash
 # Generar reporte de equidad
-python scripts/analyze_fairness.py logs/training_log_final.json
+uv run python scripts/analyze_fairness.py logs/training_log_final.json
 ```
 
 **Resultado esperado:**
@@ -193,7 +193,7 @@ torch.save(model.state_dict(), "model.pth")
 ### Setup Mínimo (Prueba Rápida - 30 seg)
 
 ```bash
-python scripts/train.py \
+uv run python scripts/train.py \
   --batch-size 32 \
   --num-epochs 1 \
   --log-interval 10

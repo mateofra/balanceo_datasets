@@ -27,19 +27,19 @@ balanceo_datasets/stgcn/
 
 ```bash
 cd stgcn
-python scripts/validate_setup.py
+uv run python scripts/validate_setup.py
 ```
 
 ### Paso 2: Entrenar
 
 ```bash
-python scripts/train.py
+uv run python scripts/train.py
 ```
 
 ### Paso 3: Analizar
 
 ```bash
-python scripts/analyze_fairness.py logs/training_log_final.json
+uv run python scripts/analyze_fairness.py logs/training_log_final.json
 ```
 
 ---
@@ -94,13 +94,13 @@ El directorio anterior `st_gcn_training_starter/` puede ser eliminado si no lo n
 ### Luego (Ejecución)
 ```bash
 cd stgcn
-python scripts/validate_setup.py
-python scripts/train.py
+uv run python scripts/validate_setup.py
+uv run python scripts/train.py
 ```
 
 ### Finalmente (Análisis)
 ```bash
-python scripts/analyze_fairness.py logs/training_log_final.json
+uv run python scripts/analyze_fairness.py logs/training_log_final.json
 ```
 
 ---
@@ -125,7 +125,7 @@ python scripts/analyze_fairness.py logs/training_log_final.json
 
 ```bash
 cd stgcn
-python scripts/validate_setup.py
+uv run python scripts/validate_setup.py
 ```
 
 Debería mostrar:
@@ -141,8 +141,8 @@ Debería mostrar:
 
 ## 🎯 Próximos Pasos
 
-1. **Entrenar**: `cd stgcn && python scripts/train.py`
-2. **Validar**: `python scripts/analyze_fairness.py logs/training_log_final.json`
+1. **Entrenar**: `cd stgcn && uv run python scripts/train.py`
+2. **Validar**: `uv run python scripts/analyze_fairness.py logs/training_log_final.json`
 3. **Usar modelo**: `torch.load("logs/checkpoints/model_final.pth")`
 
 ---

@@ -111,7 +111,7 @@ def main():
         print("\n" + "="*60)
         print("✅ SETUP VALIDADO - Listo para training")
         print("="*60)
-        print("\nEjecuta: python scripts/train.py\n")
+        print("\nEjecuta: uv run python scripts/train.py\n")
         return 0
     else:
         print("\n" + "="*60)

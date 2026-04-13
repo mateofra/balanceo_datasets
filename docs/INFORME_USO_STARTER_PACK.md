@@ -29,7 +29,7 @@ Se ha generado un **starter pack completo y profesional** para entrenar modelos 
 
 ```bash
 cd stgcn
-python scripts/validate_setup.py
+uv run python scripts/validate_setup.py
 ```
 
 **Verifica:**
@@ -41,7 +41,7 @@ python scripts/validate_setup.py
 ### 2. Entrenar Modelo
 
 ```bash
-python scripts/train.py
+uv run python scripts/train.py
 ```
 
 **Ejecuta automáticamente:**
@@ -54,7 +54,7 @@ python scripts/train.py
 ### 3. Analizar Resultados
 
 ```bash
-python scripts/analyze_fairness.py logs/training_log_final.json
+uv run python scripts/analyze_fairness.py logs/training_log_final.json
 ```
 
 **Output:**
@@ -145,10 +145,10 @@ cp -r ../data/processed/landmarks data/
 
 ```bash
 # Training con batch size 64
-python scripts/train.py --batch-size 64 --num-epochs 30
+uv run python scripts/train.py --batch-size 64 --num-epochs 30
 
 # Prueba rápida (30 segundos)
-python scripts/train.py --num-epochs 1
+uv run python scripts/train.py --num-epochs 1
 ```
 
 ### Opción B: Código Python (Más control)
@@ -211,7 +211,7 @@ config/default_config.yaml:
 ### Para GPU (Si tienes NVIDIA)
 
 ```bash
-python scripts/train.py \
+uv run python scripts/train.py \
   --device cuda \
   --batch-size 128 \
   --learning-rate 0.002 \
@@ -223,7 +223,7 @@ Acelera **~10-20x** vs CPU.
 ### Para Prueba Rápida
 
 ```bash
-python scripts/train.py --num-epochs 1 --batch-size 64
+uv run python scripts/train.py --num-epochs 1 --batch-size 64
 ```
 
 Completa en **~1 minuto**.
@@ -320,7 +320,7 @@ torch.manual_seed(42)  # Fijo
 ### Verificar Setup
 
 ```bash
-python scripts/validate_setup.py
+uv run python scripts/validate_setup.py
 ```
 
 Checklist:
@@ -332,7 +332,7 @@ Checklist:
 ### Verificar Fairness (Post-Training)
 
 ```bash
-python scripts/analyze_fairness.py logs/training_log_final.json
+uv run python scripts/analyze_fairness.py logs/training_log_final.json
 ```
 
 Debería mostrar:
@@ -421,10 +421,10 @@ Ver `INSTALL.md` para detalles completos.
 cd st_gcn_training_starter
 
 # 2. Validar
-python scripts/validate_setup.py
+uv run python scripts/validate_setup.py
 
 # 3. Entrenar
-python scripts/train.py
+uv run python scripts/train.py
 ```
 
 **Resultado en ~15 minutos:**
@@ -475,8 +475,8 @@ python scripts/train.py
 
 ```bash
 cd st_gcn_training_starter
-python scripts/validate_setup.py
-python scripts/train.py
+uv run python scripts/validate_setup.py
+uv run python scripts/train.py
 ```
 
 ¡Disfruta entrenando! 🚀
