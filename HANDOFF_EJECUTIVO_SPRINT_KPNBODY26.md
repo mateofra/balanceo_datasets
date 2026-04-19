@@ -33,7 +33,7 @@
 El repositorio activo (C:/Users/usuario/Mateo/balanceo_datasets) es autonomo:
 
 - Contiene logica local en src/stgcn/
-- Scripts auditoria_final.py y generar_graficas_informe.py actualizados para trabajar con manifiesto unificado de 30k muestras
+- Scripts src/auditoria/auditoria_final.py y src/auditoria/generar_graficas_informe.py actualizados para trabajar con manifiesto unificado de 30k muestras
 - Interprete validado: .venv del repo secundario
 
 ## Notas para Informe

@@ -1,0 +1,13 @@
+{
+  "real_by_block": {
+    "claro": 128,
+    "medio": 60214,
+    "oscuro": 4051
+  },
+  "synthetic_accepted_by_block": {
+    "claro": 853,
+    "medio": 248,
+    "oscuro": 576
+  },
+  "plot_path": "/home/mateo/PRACTICAS/balanceo_def/balanceo_datasets/graficos/stgcn_atencion_mst/comparacion_reales_vs_sinteticas_por_bloque.png"
+}

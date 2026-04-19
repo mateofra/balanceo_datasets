@@ -100,3 +100,92 @@ class STGCN(nn.Module):
         h, _ = self.temporal(h)
         out = self.head(h[:, -1, :])
         return out, attn_weights
+
+
+class STGCNBlock(nn.Module):
+    """Single ST-GCN block: graph spatial conv + temporal conv + residual."""
+
+    def __init__(
+        self,
+        in_channels: int,
+        out_channels: int,
+        adjacency: torch.Tensor,
+        temporal_kernel: int = 9,
+        dropout: float = 0.1,
+    ):
+        super().__init__()
+        self.register_buffer("A", adjacency.float())
+
+        self.spatial_conv = nn.Conv2d(in_channels, out_channels, kernel_size=1)
+        self.temporal_conv = nn.Sequential(
+            nn.BatchNorm2d(out_channels),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(
+                out_channels,
+                out_channels,
+                kernel_size=(temporal_kernel, 1),
+                padding=(temporal_kernel // 2, 0),
+            ),
+            nn.BatchNorm2d(out_channels),
+            nn.Dropout(dropout),
+        )
+
+        if in_channels == out_channels:
+            self.residual = nn.Identity()
+        else:
+            self.residual = nn.Sequential(
+                nn.Conv2d(in_channels, out_channels, kernel_size=1),
+                nn.BatchNorm2d(out_channels),
+            )
+
+        self.activation = nn.ReLU(inplace=True)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        # x: (B, C, T, V)
+        residual = self.residual(x)
+
+        # Aggregate neighboring joints through the hand adjacency matrix.
+        x = torch.einsum("nctv,vw->nctw", x, self.A)
+        x = self.spatial_conv(x)
+        x = self.temporal_conv(x)
+        x = x + residual
+        return self.activation(x)
+
+
+class RealSTGCN(nn.Module):
+    """Stacked ST-GCN model using anatomical hand graph and temporal convolutions."""
+
+    def __init__(
+        self,
+        num_classes: int,
+        adjacency: torch.Tensor,
+        in_channels: int = 3,
+        dropout: float = 0.2,
+    ):
+        super().__init__()
+
+        self.data_bn = nn.BatchNorm1d(in_channels * adjacency.shape[0])
+
+        self.blocks = nn.ModuleList(
+            [
+                STGCNBlock(in_channels, 64, adjacency, temporal_kernel=9, dropout=dropout),
+                STGCNBlock(64, 64, adjacency, temporal_kernel=9, dropout=dropout),
+                STGCNBlock(64, 128, adjacency, temporal_kernel=9, dropout=dropout),
+            ]
+        )
+
+        self.classifier = nn.Linear(128, num_classes)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        # x: (B, C, T, V)
+        b, c, t, v = x.shape
+        x = x.view(b, c * v, t)
+        x = self.data_bn(x)
+        x = x.view(b, c, t, v)
+
+        for block in self.blocks:
+            x = block(x)
+
+        # Global average pooling over temporal and joint dimensions.
+        x = x.mean(dim=-1).mean(dim=-1)
+        return self.classifier(x)

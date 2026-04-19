@@ -28,19 +28,19 @@ ENTRADA
   â”‚   â””â”€ hagrid_gesture_imageid.npy (21Ã—3 coords)
   â””â”€ Estructura esperada: Nx21x3 (N muestras, 21 landmarks, 3 coords xyz)
        â†“
-[FASE 3] Balanceo con InformaciÃ³n MST
-  â”œâ”€ Input: 
+[FASE 3] Balanceo con Información MST
+  â”œâ”€ Input:
   â”‚   â”œâ”€ CSV de MST (Phase 1 output)
-  â”‚   â”œâ”€ datasets/training_xyz.json (FreiHAND)
-  â”‚   â”œâ”€ datasets/ann_subsample/ (HaGRID anotaciones)
+  â”‚   â”œâ”€ FreiHAND: ver [README-Datasets.md](../README-Datasets.md)
+  â”‚   â”œâ”€ HaGRID: ver [README-Datasets.md](../README-Datasets.md)
   â”‚   â””â”€ CSV anterior si existe (para reproducibilidad)
   â”œâ”€ Script: src/balancer/balancear_freihand_hagrid.py
-  â”œâ”€ ConfiguraciÃ³n:
+  â”œâ”€ Configuración:
   â”‚   â”œâ”€ --target-size 20000 (muestras objetivo)
   â”‚   â”œâ”€ --hagrid-ratio 0.5 (50% HaGRID, 50% FreiHAND)
   â”‚   â”œâ”€ --mst-csv <path_a_csv_fase1>
   â”‚   â”œâ”€ --extreme-factor 2.0 (peso extra para MST 1,2,3,10)
-  â”‚   â”œâ”€ --dark-jitter-factor 0.5 (replicaciÃ³n virtual MST 8-9)
+  â”‚   â”œâ”€ --dark-jitter-factor 0.5 (replicación virtual MST 8-9)
   â”‚   â””â”€ --impute-missing-mst (llenar MST faltantes con imputation)
   â”œâ”€ Output CSV columnas:
   â”‚   â”œâ”€ sample_id
@@ -49,8 +49,8 @@ ENTRADA
   â”‚   â”œâ”€ mst (1-10)
   â”‚   â””â”€ mst_origin (csv/imputed)
   â””â”€ Output: output/train_manifest_balanceado_freihand_hagrid.csv
-       â†“
-[FASE 4] GeneraciÃ³n Manifiesto ST-GCN
+       ←
+[FASE 4] Generación Manifiesto ST-GCN
   â”œâ”€ Input:
   â”‚   â”œâ”€ train_manifest_balanceado_freihand_hagrid.csv (Phase 3)
   â”‚   â”œâ”€ data/processed/landmarks/ (Phase 2)
@@ -119,14 +119,14 @@ hagrid_ok_image001,ok_001,3,claro
 
 #### OpciÃ³n A: Usar landmarks de FreiHAND (ya disponibles)
 ```bash
-# Los datos ya estÃ¡n en datasets/training_xyz.json
+# Los datos y rutas exactas están documentados en README-Datasets.md
 # Solo necesita conversiÃ³n a estructura Nx21x3 â†’ .npy individual
 ```
 
 **Script necesario** (crear):
 ```python
 # src/preprocessing/procesar_landmarks_freihand.py
-# Lee datasets/training_xyz.json
+# Lee datasets/FreiHAND_pub_v2/training_xyz.json
 # Para cada Ã­ndice, guarda data/processed/landmarks/freihand_XXXXXXX.npy
 ```
 
@@ -261,7 +261,7 @@ hagrid_ok_image001,data/processed/landmarks/hagrid_ok_image001.npy,ok,claro,hagr
 | `src/preprocessing/procesar_landmarks_freihand.py` | âŒ Falta | Prioridad media |
 | `src/preprocessing/procesar_landmarks_hagrid_mediapipe.py` | âŒ Falta | Prioridad media |
 | `models/hand_landmarker.task` | âœ… Existe | Modelo MediaPipe |
-| `datasets/training_xyz.json` | âœ… Existe | FreiHAND data |
+| `datasets/FreiHAND_pub_v2/training_xyz.json` | âœ… Existe | FreiHAND data |
 | `datasets/ann_subsample/` | âœ… Existe | HaGRID anotaciones |
 | `data/raw/images/` | âŒ Falta | ImÃ¡genes a procesar (opcional) |
 | `data/processed/landmarks/` | âŒ Falta | Output landmarks .npy |

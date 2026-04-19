@@ -4,6 +4,8 @@
 
 Pipeline **COMPLETADO** para preparar landmarks de mano (FreiHAND) para entrenamiento de ST-GCN con normalización universal z-score.
 
+Para ubicar y preparar las entradas de datos, usa [README-Datasets.md](../README-Datasets.md) como guía canónica.
+
 **Status**: ✅ Listo para training  
 **Secuencias disponibles**: 10,000  
 **Shape de entrada**: (B, T=16, Joints=21, Coords=3)  

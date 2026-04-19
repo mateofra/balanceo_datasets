@@ -3,7 +3,7 @@
 Este documento describe **la forma correcta e irrompible** de dejar operativo un entorno nuevo, descargando y armando la estructura de carpetas cuando `datasets/`, `data/` y `stgcn/data/` no vienen incluidos en git (por `.gitignore`).
 
 > [!WARNING]  
-> **REGLA DE ORO:** **Siempre** ejecuta los comandos desde la carpeta **RAÍZ** del repositorio (donde se encuentra `main.py` y `pyproject.toml`). Ejecutar los scripts directamente desde adentro de la carpeta `scripts/` o `docs/` romperá las rutas y las importaciones.
+> **REGLA DE ORO:** **Siempre** ejecuta los comandos desde la carpeta **RAÍZ** del repositorio (donde se encuentra `pyproject.toml` y `src/cli/main.py`). Ejecutar los scripts directamente desde adentro de `src/datasets/` o `docs/` romperá las rutas y las importaciones.
 
 ---
 
@@ -12,7 +12,7 @@ Este documento describe **la forma correcta e irrompible** de dejar operativo un
 Abre una terminal en la raíz del repositorio y ejecuta el orquestador principal:
 
 ```bash
-uv run python main.py setup-data
+uv run python src/cli/main.py setup-data
 ```
 
 **¿Qué hace esto?**
@@ -36,7 +36,7 @@ El pipeline soporta descarga automática del dataset HaGRID directo desde Kaggle
 Para forzar la descarga de los gigabytes reales y la reorganización de carpetas de anotación:
 
 ```bash
-uv run python main.py setup-data --download-hagrid --execute-download --prepare-ann-subsample --strict-download
+uv run python src/cli/main.py setup-data --download-hagrid --execute-download --prepare-ann-subsample --strict-download
 ```
 
 > **📌 Tip de Seguridad:** Si te da un error de credenciales persistente, simplemente crea de forma manual el archivo en `secrets/kaggle/kaggle.json` con el contenido del tuyo y re-ejecuta.
@@ -63,9 +63,11 @@ La ruta final esperada por el pipeline debe verse obligatoriamente así:
 Una vez que descargaste HaGRID (automático) y FreiHAND (manual), asegúrate de que el pipeline de ML vea exitosamente los archivos ejecutando este test:
 
 ```bash
-uv run python main.py setup-data
+uv run python src/cli/main.py setup-data
 ```
+
+Si prefieres ejecutar los pasos de forma directa sin el orquestador, consulta [README-Datasets.md](../README-Datasets.md).
 
 Al final del reporte deberías ver todos los *status* críticos en **`[FOUND]`**. Si alguno muestra `[MISS]`, el sistema fallará durante el balanceo o entrenamiento. Revisa tus rutas en ese caso.
 
-> ¡Hecho esto, tu clon estará cimentado y listo para invocar `uv run python main.py balanceo`!
+> ¡Hecho esto, tu clon estará cimentado y listo para invocar `uv run python src/cli/main.py balanceo`!

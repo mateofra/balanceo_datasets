@@ -1,0 +1,30 @@
+nohup: ignoring input
+Device: cuda
+Combined manifest: /home/mateo/PRACTICAS/balanceo_def/balanceo_datasets/output/final_manifests/manifest_verificacion_temporal_4sets.csv
+Splits: {'train': 32787, 'val': 7026, 'test': 7023}
+Datasets in split: {('test', 'freihand'): 1229, ('test', 'hagrid'): 1501, ('test', 'mano'): 1549, ('test', 'synthetic'): 2744, ('train', 'freihand'): 6012, ('train', 'hagrid'): 6900, ('train', 'mano'): 6980, ('train', 'synthetic'): 12895, ('val', 'freihand'): 1278, ('val', 'hagrid'): 1498, ('val', 'mano'): 1471, ('val', 'synthetic'): 2779}
+Scheduler: CosineAnnealingLR(T_max=20, eta_min=0.0001)
+Epoch 01/20 | lr=0.001000 | train_loss=2.8958 train_acc=7.86% | val_loss=2.4712 val_acc=23.67%
+Epoch 02/20 | lr=0.000994 | train_loss=2.8830 train_acc=7.86% | val_loss=2.4746 val_acc=23.73%
+Epoch 03/20 | lr=0.000978 | train_loss=2.8779 train_acc=8.42% | val_loss=2.4636 val_acc=23.56%
+Epoch 04/20 | lr=0.000951 | train_loss=2.8683 train_acc=8.66% | val_loss=2.5256 val_acc=23.54%
+Epoch 05/20 | lr=0.000914 | train_loss=2.8650 train_acc=8.79% | val_loss=2.4753 val_acc=23.63%
+Epoch 06/20 | lr=0.000868 | train_loss=2.8695 train_acc=8.79% | val_loss=2.5286 val_acc=23.81%
+Epoch 07/20 | lr=0.000815 | train_loss=2.8695 train_acc=8.97% | val_loss=2.5044 val_acc=23.54%
+Epoch 08/20 | lr=0.000754 | train_loss=2.8609 train_acc=9.50% | val_loss=2.5432 val_acc=23.34%
+Epoch 09/20 | lr=0.000689 | train_loss=2.8586 train_acc=9.12% | val_loss=2.4795 val_acc=23.81%
+Epoch 10/20 | lr=0.000620 | train_loss=2.8559 train_acc=9.49% | val_loss=2.5065 val_acc=23.95%
+Epoch 11/20 | lr=0.000550 | train_loss=2.8511 train_acc=9.64% | val_loss=2.5184 val_acc=23.54%
+Epoch 12/20 | lr=0.000480 | train_loss=2.8492 train_acc=10.06% | val_loss=2.4590 val_acc=23.57%
+Epoch 13/20 | lr=0.000411 | train_loss=2.8493 train_acc=10.14% | val_loss=2.4365 val_acc=23.87%
+Epoch 14/20 | lr=0.000346 | train_loss=2.8399 train_acc=10.26% | val_loss=2.4905 val_acc=23.85%
+Epoch 15/20 | lr=0.000285 | train_loss=2.8385 train_acc=10.70% | val_loss=2.4862 val_acc=23.34%
+Epoch 16/20 | lr=0.000232 | train_loss=2.8275 train_acc=11.05% | val_loss=2.5220 val_acc=23.91%
+Epoch 17/20 | lr=0.000186 | train_loss=2.8300 train_acc=10.99% | val_loss=2.5066 val_acc=23.91%
+Epoch 18/20 | lr=0.000149 | train_loss=2.8326 train_acc=10.97% | val_loss=2.4957 val_acc=23.78%
+Epoch 19/20 | lr=0.000122 | train_loss=2.8256 train_acc=11.34% | val_loss=2.4949 val_acc=23.83%
+Epoch 20/20 | lr=0.000106 | train_loss=2.8225 train_acc=11.33% | val_loss=2.5222 val_acc=23.70%
+Saved model: /home/mateo/PRACTICAS/balanceo_def/balanceo_datasets/output/final_manifests/model_real_stgcn_best.pth
+Saved results: /home/mateo/PRACTICAS/balanceo_def/balanceo_datasets/output/final_manifests/training_verificacion_temporal_real_stgcn.json
+Val losses: [2.4712, 2.4746, 2.4636, 2.5256, 2.4753, 2.5286, 2.5044, 2.5432, 2.4795, 2.5065, 2.5184, 2.459, 2.4365, 2.4905, 2.4862, 2.522, 2.5066, 2.4957, 2.4949, 2.5222]
+Final val acc: 23.698

@@ -1,0 +1,9 @@
+{
+  "real_total_hagrid_freihand": 64393,
+  "synthetic_generated_total": 3645,
+  "synthetic_accepted_total": 1677,
+  "real_hagrid": 31833,
+  "real_freihand": 32560,
+  "accepted_over_generated_ratio": 0.460082304526749,
+  "plot_path": "/home/mateo/PRACTICAS/balanceo_def/balanceo_datasets/graficos/stgcn_atencion_mst/comparacion_reales_vs_sinteticas.png"
+}

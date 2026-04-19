@@ -1,0 +1,30 @@
+{
+  "generated_manifest": "/home/mateo/PRACTICAS/balanceo_def/balanceo_datasets/datasets/synthetic_mst/metadata/manifest_synthetic_generated_blocks_qc_adjusted.csv",
+  "accepted_manifest": "/home/mateo/PRACTICAS/balanceo_def/balanceo_datasets/datasets/synthetic_mst/metadata/manifest_synthetic_accepted_blocks_qc_adjusted.csv",
+  "tolerance": 1,
+  "rows_total": 7375,
+  "rows_accepted": 2669,
+  "rejected_missing": 0,
+  "rejected_unreadable": 0,
+  "rejected_mst_mismatch": 4706,
+  "target_counts_seen": {
+    "1": 2188,
+    "2": 2188,
+    "3": 2188,
+    "8": 271,
+    "9": 270,
+    "10": 270
+  },
+  "predicted_counts_seen": {
+    "1": 78,
+    "2": 918,
+    "3": 615,
+    "4": 1689,
+    "5": 2818,
+    "6": 342,
+    "7": 520,
+    "8": 209,
+    "9": 131,
+    "10": 55
+  }
+}

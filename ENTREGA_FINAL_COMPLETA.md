@@ -41,7 +41,7 @@ Se ha completado **exitosamente** el entrenamiento de un modelo **ST-GCN (Spatio
 
 ### 4️⃣  Archivos Computacionales
 ```
-🐍 train_stgcn_attention.py         Script de entrenamiento
+🐍 src/stgcn/train_stgcn_attention.py         Script de entrenamiento
 📊 output/training_logs/training_results.json   Métricas
 📊 output/training_logs/model_info.json         Arquitectura
 📊 output/train_manifest_stgcn.csv             Dataset manifiesto
@@ -117,7 +117,7 @@ output = features * attention_weights  # Attended features
 - Columnas: sample_id, path_landmarks, label, mst, source, mst_origin, sampling_weight
 
 ### Fase 4: Entrenamiento ST-GCN ✅
-- Script: `train_stgcn_attention.py`
+- Script: `src/stgcn/train_stgcn_attention.py`
 - Configuración:
   - Optimizer: Adam (lr=0.001)
   - Loss: CrossEntropyLoss
@@ -156,8 +156,8 @@ Escala MST Fitzpatrick 1-10:
 /balanceo_datasets/
 ├── 📋 RESUMEN_ENTREGA_EJECUTIVO.md      ← LEE ESTO PARA SUPERVISORA
 ├── 📋 GUIA_PRESENTACION.sh              ← Script de validación
-├── 🐍 train_stgcn_attention.py         ← Script de training
-├── 🐍 generate_landmarks_simple.py     ← Generador de landmarks
+├── 🐍 src/stgcn/train_stgcn_attention.py         ← Script de training
+├── 🐍 src/pipeline/generate_landmarks_simple.py  ← Generador de landmarks
 │
 ├── output/
 │   ├── 📋 REPORTE_ENTREGA_STGCN_ATENCION.md

@@ -36,12 +36,44 @@ class DataLoaders:
         return mapping
 
     @staticmethod
-    def load_freihand_records(training_xyz_path: Path) -> list[SampleRecord]:
+    def load_freihand_records(
+        training_xyz_path: Path,
+        canonical_rgb_manifest_csv: Path | None = None,
+    ) -> list[SampleRecord]:
         with training_xyz_path.open("r", encoding="utf-8") as f:
             xyz = json.load(f)
 
+        canonical_indices: list[int] | None = None
+        if canonical_rgb_manifest_csv is not None and canonical_rgb_manifest_csv.exists():
+            expected_ids = {f"freihand_{idx:08d}" for idx in range(len(xyz))}
+            indices: set[int] = set()
+
+            with canonical_rgb_manifest_csv.open("r", encoding="utf-8", newline="") as f:
+                reader = csv.DictReader(f)
+                for row in reader:
+                    sample_id = str(row.get("sample_id", "")).strip().lower()
+                    if sample_id in expected_ids:
+                        try:
+                            indices.add(int(sample_id.split("_", 1)[1]))
+                        except (IndexError, ValueError):
+                            continue
+
+            if indices:
+                canonical_indices = sorted(indices)
+                print(
+                    "FreiHAND: usando manifiesto canónico "
+                    f"{canonical_rgb_manifest_csv} ({len(canonical_indices)} muestras)."
+                )
+            else:
+                print(
+                    "Aviso: manifiesto canónico FreiHAND sin filas válidas para training_xyz; "
+                    "se usa rango completo 0..N-1."
+                )
+
+        selected_indices = canonical_indices if canonical_indices is not None else list(range(len(xyz)))
+
         records: list[SampleRecord] = []
-        for idx in range(len(xyz)):
+        for idx in selected_indices:
             records.append(
                 SampleRecord(
                     sample_id=f"freihand_{idx:08d}",

@@ -1,0 +1,20 @@
+{
+  "hagrid_total": 0,
+  "freihand_total": 32560,
+  "hagrid_counts": {},
+  "freihand_counts": {
+    "1": 34,
+    "2": 72,
+    "3": 12,
+    "4": 672,
+    "5": 8392,
+    "6": 11701,
+    "7": 7954,
+    "8": 3333,
+    "9": 362,
+    "10": 28
+  },
+  "hagrid_csv": "/home/mateo/PRACTICAS/balanceo_def/balanceo_datasets/csv/mst_hagrid_real_images.csv",
+  "freihand_csv": "/home/mateo/PRACTICAS/balanceo_def/balanceo_datasets/csv/mst_freihand_real_images.csv",
+  "output_plot": "/home/mateo/PRACTICAS/balanceo_def/balanceo_datasets/graficos/stgcn_atencion_mst/distribucion_mst_hagrid_vs_freihand_canonico.png"
+}

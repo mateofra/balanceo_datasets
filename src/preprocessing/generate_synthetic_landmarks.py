@@ -172,27 +172,39 @@ def generate_stgcn_manifest(
     manifest_df["path_landmarks"] = manifest_df["sample_id"].map(
         lambda sid: landmarks_mapping.get(sid, "")
     )
-    
+
     # Validación: todos los samples deben tener landmarks
-    missing_landmarks = manifest_df[manifest_df["path_landmarks"].isna()].shape[0]
+    missing_landmarks = manifest_df[manifest_df["path_landmarks"].isna() | (manifest_df["path_landmarks"] == "")].shape[0]
     if missing_landmarks > 0:
         print(f"⚠️  {missing_landmarks} samples sin landmarks")
     
+    if "gesture" in manifest_df.columns and "label" not in manifest_df.columns:
+        manifest_df = manifest_df.rename(columns={"gesture": "label"})
+    if "source" in manifest_df.columns and "dataset" not in manifest_df.columns:
+        manifest_df = manifest_df.rename(columns={"source": "dataset"})
+    if "split" not in manifest_df.columns:
+        manifest_df["split"] = "train"
+    if "condition" not in manifest_df.columns:
+        if "mst" in manifest_df.columns:
+            manifest_df["condition"] = manifest_df["mst"].map(
+                lambda mst: "claro" if int(mst) <= 4 else ("medio" if int(mst) <= 7 else "oscuro")
+            )
+        else:
+            manifest_df["condition"] = "sin_mst"
+
     # Reordenar y seleccionar columnas
     output_columns = [
         "sample_id",
         "path_landmarks",
-        "gesture",  # O "label" si existe
+        "label",
+        "condition",
+        "dataset",
         "mst",
-        "source",  # O "dataset"
         "mst_origin",
-        "sampling_weight",  # Si existe
+        "split",
     ]
-    
-    # Filtrar columnas existentes
-    final_columns = [col for col in output_columns if col in manifest_df.columns]
-    
-    stgcn_df = manifest_df[final_columns]
+
+    stgcn_df = manifest_df[[col for col in output_columns if col in manifest_df.columns]].copy()
     
     # Guardar
     output_csv.parent.mkdir(parents=True, exist_ok=True)
@@ -201,7 +213,7 @@ def generate_stgcn_manifest(
     if verbose:
         print(f"✓ Manifiesto ST-GCN guardado: {output_csv}")
         print(f"  - Total samples: {len(stgcn_df)}")
-        print(f"  - Columnas: {', '.join(final_columns)}")
+        print(f"  - Columnas: {', '.join(stgcn_df.columns)}")
 
 
 def main():
@@ -223,7 +235,7 @@ def main():
     parser.add_argument(
         "--output-stgcn-csv",
         type=Path,
-        default=Path("output/train_manifest_stgcn_synthetic.csv"),
+        default=Path("output/train_manifest_stgcn.csv"),
         help="CSV de salida para ST-GCN",
     )
     parser.add_argument(

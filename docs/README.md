@@ -13,6 +13,7 @@ Este directorio contiene toda la documentación técnica y guías del proyecto *
 - **INFORME_USO_STARTER_PACK.md** - Reporte de uso del starter pack
 - **README_TRABAJO_COMPLETADO.md** - Resumen del trabajo realizado
 - **README_evaluacion_datasets.md** - Documentación de evaluación de datasets
+- **README-Datasets.md** - Flujo canónico de extracción, descarga y balanceo de datasets
 
 ## 📖 Cómo Usar
 

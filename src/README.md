@@ -8,6 +8,11 @@ Codigo fuente organizado por dominio.
 - `classification/`: clasificacion de tonos MST con MediaPipe.
 - `preprocessing/`: conversion y procesamiento de landmarks.
 - `stgcn/`: grafo anatomico, modelo ST-GCN, dataloader y ejemplo de entrenamiento.
+- `pipeline/`: orquestacion de unificacion de manifiestos y preparacion de entrenamiento.
+- `auditoria/`: auditoria DPR/TVD y generacion de graficas de informe.
+- `diagnostico/`: scripts de depuracion y validacion de rutas/manifiestos.
+- `maintenance/`: utilidades de limpieza operativa del repositorio.
+- `cli/`: entrypoints ligeros de linea de comandos.
 
 ## Uso
 
@@ -17,6 +22,7 @@ Ejecuta scripts con `uv run python ...` desde la raiz del repositorio.
 
 ```bash
 uv run python src/balancer/balancear_freihand_hagrid.py \
+  --freihand-canonical-rgb-manifest output/auditoria/freihand_rgb_canonical_manifest.csv \
   --output-csv output/train_manifest_balanceado_freihand_hagrid.csv \
   --output-stgcn-manifest-csv output/train_manifest_stgcn.csv \
   --landmarks-root-dir data/processed/landmarks

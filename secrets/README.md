@@ -10,4 +10,4 @@ Esta bóveda existe únicamente en tu máquina local. Actúa como el cajón segu
 - `kaggle/`: Subdirectorio enfocado a aislar el Token API del repositorio *HaGRID*.
   - `kaggle.json`: Fichero que debes inyectar tú mismo siguiendo el formato clásico (`{"username":"...", "key":"..."}`) extraído desde la configuración de Kaggle.
 
-Sin estos subficheros los comandos constructivos como `uv run python main.py setup-data --download-hagrid` estallarán y te denegarán el acceso, forzándote incesantemente por la terminal a que introduzcas la llave manualmente.
+Sin estos subficheros los comandos constructivos como `uv run python src/cli/main.py setup-data --download-hagrid` estallarán y te denegarán el acceso, forzándote incesantemente por la terminal a que introduzcas la llave manualmente.

@@ -22,6 +22,91 @@ from src.balancer.loaders import DataLoaders, MstLoader
 from src.balancer.imputer import MstImputer
 from src.balancer.sampler import DatasetBalancer
 from src.balancer.writers import ManifestWriters
+from src.balancer.core import SampleRecord
+
+
+# Backward-compatible helpers for tests and legacy callers.
+def _build_landmark_path(record: SampleRecord, landmarks_root: Path) -> str:
+    return ManifestWriters._build_landmark_path(record, landmarks_root)
+
+
+def _build_balanced_manifest(
+    freihand_records: list[SampleRecord],
+    hagrid_records: list[SampleRecord],
+    target_size: int,
+    hagrid_ratio: float,
+    rng: random.Random,
+    extreme_mst_levels: set[int],
+    extreme_factor: float,
+) -> list[SampleRecord]:
+    balancer = DatasetBalancer(rng, extreme_mst_levels, extreme_factor)
+    return balancer.build_balanced_manifest(freihand_records, hagrid_records, target_size, hagrid_ratio)
+
+
+def _compute_mst_match_report(
+    freihand_records: list[SampleRecord],
+    hagrid_records: list[SampleRecord],
+    mst_map: dict[str, int],
+) -> dict[str, object]:
+    return MstLoader.compute_match_report(freihand_records, hagrid_records, mst_map)
+
+
+def _compute_summary(records: list[SampleRecord]) -> dict[str, object]:
+    return ManifestWriters.compute_summary(records)
+
+
+def _expand_with_dark_jitter_candidates(
+    records: list[SampleRecord],
+    jitter_factor: float,
+    rng: random.Random,
+) -> list[SampleRecord]:
+    balancer = DatasetBalancer(rng, set(DEFAULT_EXTREME_MST_LEVELS), DEFAULT_EXTREME_FACTOR)
+    return balancer.expand_with_dark_jitter_candidates(records, jitter_factor)
+
+
+def _impute_missing_mst(records: list[SampleRecord], rng: random.Random) -> list[SampleRecord]:
+    return MstImputer.impute_missing_mst(records, rng)
+
+
+def _mst_to_condition(mst: int | None) -> str:
+    return ManifestWriters._mst_to_condition(mst)
+
+
+def _print_mst_match_report(report: dict[str, object]) -> None:
+    MstLoader.print_match_report(report)
+
+
+def _sample_with_mst_priority(
+    pool: list[SampleRecord],
+    target_size: int,
+    rng: random.Random,
+    extreme_mst_levels: set[int],
+    extreme_factor: float,
+) -> list[SampleRecord]:
+    balancer = DatasetBalancer(rng, extreme_mst_levels, extreme_factor)
+    return balancer._sample_with_mst_priority(pool, target_size)
+
+
+def _write_stgcn_manifest_csv(
+    output_csv: Path,
+    records: list[SampleRecord],
+    landmarks_root: Path,
+    include_missing_mst: bool,
+) -> None:
+    ManifestWriters.write_stgcn_manifest_csv(
+        output_csv=output_csv,
+        records=records,
+        landmarks_root=landmarks_root,
+        include_missing_mst=include_missing_mst,
+    )
+
+
+def _write_landmark_training_dirs(output_dir: Path, records: list[SampleRecord]) -> None:
+    ManifestWriters.write_landmark_training_dirs(output_dir, records)
+
+
+def _write_tone_sets(output_dir: Path, records: list[SampleRecord]) -> None:
+    ManifestWriters.write_tone_sets(output_dir, records)
 
 
 def parse_args() -> argparse.Namespace:
@@ -34,8 +119,18 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--freihand-training-xyz",
         type=Path,
-        default=Path("datasets/training_xyz.json"),
-        help="Ruta a datasets/training_xyz.json de FreiHAND.",
+        default=Path("datasets/FreiHAND_pub_v2/training_xyz.json"),
+        help="Ruta a datasets/FreiHAND_pub_v2/training_xyz.json de FreiHAND.",
+    )
+    parser.add_argument(
+        "--freihand-canonical-rgb-manifest",
+        type=Path,
+        default=Path("output/auditoria/freihand_rgb_canonical_manifest.csv"),
+        help=(
+            "CSV opcional con subset canónico FreiHAND (sample_id) para forzar "
+            "mapeo 1:1 con training_xyz y excluir RGB extra. Si no existe, se usa "
+            "el rango completo definido por training_xyz.json."
+        ),
     )
     parser.add_argument(
         "--hagrid-annotations-dir",
@@ -207,7 +302,10 @@ def main() -> None:
 
     rng = random.Random(args.seed)
 
-    freihand_records = DataLoaders.load_freihand_records(args.freihand_training_xyz)
+    freihand_records = DataLoaders.load_freihand_records(
+        args.freihand_training_xyz,
+        canonical_rgb_manifest_csv=args.freihand_canonical_rgb_manifest,
+    )
     hagrid_records = DataLoaders.load_hagrid_records(args.hagrid_annotations_dir, args.gestures)
 
     if args.mst_csv is not None:

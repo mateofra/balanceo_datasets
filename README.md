@@ -21,28 +21,28 @@ El proyecto se ejecuta con el interprete corporativo:
 
 ```powershell
 Set-Location 'C:\Users\usuario\Mateo\balanceo_datasets'
-& 'C:\Users\usuario\Mateo\balanceo_2\balanceo_datasets\.venv\Scripts\python.exe' unificar_datasets_y_split.py
+& 'C:\Users\usuario\Mateo\balanceo_2\balanceo_datasets\.venv\Scripts\python.exe' src/pipeline/unificar_datasets_y_split.py
 ```
 
 2. Entrenar ST-GCN:
 
 ```powershell
 Set-Location 'C:\Users\usuario\Mateo\balanceo_datasets'
-& 'C:\Users\usuario\Mateo\balanceo_2\balanceo_datasets\.venv\Scripts\python.exe' -u preparar_y_entrenar.py
+& 'C:\Users\usuario\Mateo\balanceo_2\balanceo_datasets\.venv\Scripts\python.exe' -u src/pipeline/preparar_y_entrenar.py
 ```
 
 3. Auditoria DPR/TVD:
 
 ```powershell
 Set-Location 'C:\Users\usuario\Mateo\balanceo_datasets'
-& 'C:\Users\usuario\Mateo\balanceo_2\balanceo_datasets\.venv\Scripts\python.exe' auditoria_final.py
+& 'C:\Users\usuario\Mateo\balanceo_2\balanceo_datasets\.venv\Scripts\python.exe' src/auditoria/auditoria_final.py
 ```
 
 4. Generar graficas:
 
 ```powershell
 Set-Location 'C:\Users\usuario\Mateo\balanceo_datasets'
-& 'C:\Users\usuario\Mateo\balanceo_2\balanceo_datasets\.venv\Scripts\python.exe' generar_graficas_informe.py
+& 'C:\Users\usuario\Mateo\balanceo_2\balanceo_datasets\.venv\Scripts\python.exe' src/auditoria/generar_graficas_informe.py
 ```
 
 ## Archivos de salida esperados

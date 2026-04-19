@@ -1,0 +1,22 @@
+{
+  "inputs": [
+    "/home/mateo/PRACTICAS/balanceo_def/balanceo_datasets/csv/mst_hagrid_sample_30k_384p.csv",
+    "/home/mateo/PRACTICAS/balanceo_def/balanceo_datasets/csv/mst_freihand_real_images.csv",
+    "/home/mateo/PRACTICAS/balanceo_def/balanceo_datasets/datasets/synthetic_mst/metadata/manifest_mano_samples_balanced.csv"
+  ],
+  "seed": 42,
+  "target_block_count": 4975,
+  "original_block_counts": {
+    "medio": 62367,
+    "oscuro": 7051,
+    "claro": 4975
+  },
+  "selected_block_counts": {
+    "oscuro": 4975,
+    "medio": 4975,
+    "claro": 4975
+  },
+  "total_original_rows": 74393,
+  "total_selected_rows": 14925,
+  "output_manifest": "/home/mateo/PRACTICAS/balanceo_def/balanceo_datasets/output/manifest_balanced_blocks.csv"
+}

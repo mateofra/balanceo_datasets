@@ -1,0 +1,83 @@
+{
+  "config": {
+    "architecture": "SimpleST_GCN(hidden_dim=64)",
+    "epochs": 8,
+    "batch_size": 32,
+    "learning_rate": 0.001,
+    "seed": 42,
+    "source_manifests": {
+      "hagrid": "/home/mateo/PRACTICAS/balanceo_def/balanceo_datasets/output/final_manifests/manifest_hagrid_secuencias.csv",
+      "freihand": "/home/mateo/PRACTICAS/balanceo_def/balanceo_datasets/output/final_manifests/manifest_freihand_secuencias.csv",
+      "synthetic": "/home/mateo/PRACTICAS/balanceo_def/balanceo_datasets/output/final_manifests/manifest_synthetic_secuencias.csv",
+      "mano": "/home/mateo/PRACTICAS/balanceo_def/balanceo_datasets/output/final_manifests/manifest_mano_secuencias.csv"
+    },
+    "combined_manifest": "/home/mateo/PRACTICAS/balanceo_def/balanceo_datasets/output/final_manifests/manifest_verificacion_temporal_4sets.csv",
+    "train_samples": 32787,
+    "val_samples": 7026,
+    "test_samples": 7023,
+    "num_classes": 19
+  },
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 2.9019037986383207,
+      "train_accuracy": 6.935675725134962,
+      "val_loss": 2.4459084369919517,
+      "val_accuracy": 23.68346142897808
+    },
+    {
+      "epoch": 2,
+      "train_loss": 2.877958421009343,
+      "train_accuracy": 7.53957361149236,
+      "val_loss": 2.443998841264031,
+      "val_accuracy": 23.626530031312267
+    },
+    {
+      "epoch": 3,
+      "train_loss": 2.8776656939343708,
+      "train_accuracy": 7.8750724372464695,
+      "val_loss": 2.479963826591318,
+      "val_accuracy": 23.58383148306291
+    },
+    {
+      "epoch": 4,
+      "train_loss": 2.881681570425266,
+      "train_accuracy": 7.545673590142434,
+      "val_loss": 2.4534459379586306,
+      "val_accuracy": 23.7688585254768
+    },
+    {
+      "epoch": 5,
+      "train_loss": 2.878559720574356,
+      "train_accuracy": 7.7469728855949,
+      "val_loss": 2.4634871049360796,
+      "val_accuracy": 23.754625676060346
+    },
+    {
+      "epoch": 6,
+      "train_loss": 2.8807016505264653,
+      "train_accuracy": 7.774422789520236,
+      "val_loss": 2.4649967366998844,
+      "val_accuracy": 23.384571591232564
+    },
+    {
+      "epoch": 7,
+      "train_loss": 2.8747578099878823,
+      "train_accuracy": 7.917772287796993,
+      "val_loss": 2.503792709654028,
+      "val_accuracy": 23.512667235980643
+    },
+    {
+      "epoch": 8,
+      "train_loss": 2.8727177289637122,
+      "train_accuracy": 8.146521487174795,
+      "val_loss": 2.4756069394675166,
+      "val_accuracy": 23.341873042983206
+    }
+  ],
+  "best_val_accuracy": 23.7688585254768,
+  "final_val_accuracy": 23.341873042983206,
+  "final_val_loss": 2.4756069394675166,
+  "test_loss": 2.4174672202630476,
+  "test_accuracy": 24.576391855332478
+}

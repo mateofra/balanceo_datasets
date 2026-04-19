@@ -1,4 +1,6 @@
-﻿# GuÃ­a: Entrenar ST-GCN con Dataset Balanceado por MST
+﻿# Guía: Entrenar ST-GCN con Dataset Balanceado por MST
+
+Para preparar la entrada de datos, descarga, extracción y balanceo, usa [README-Datasets.md](../README-Datasets.md) como referencia canónica.
 
 ## Resumen RÃ¡pido
 

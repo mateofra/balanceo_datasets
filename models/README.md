@@ -4,7 +4,7 @@ Esta carpeta contiene modelos binarios necesarios para ejecucion local.
 
 ## Contenido
 
-- `hand_landmarker.task`: modelo de MediaPipe usado por `extraer_landmarks_hagrid_nuevo.py`.
+- `hand_landmarker.task`: modelo de MediaPipe usado por `src/pipeline/extraer_landmarks_hagrid_nuevo.py`.
 
 ## Uso
 

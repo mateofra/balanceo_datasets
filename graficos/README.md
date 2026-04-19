@@ -22,13 +22,13 @@ uv run python src/balancer/generar_graficos_balanceo.py \
 Grafica de auditoria:
 
 ```powershell
-uv run python scripts/generate/generar_grafica_auditoria_dpr.py
+uv run python src/scripts/generate/generar_grafica_auditoria_dpr.py
 ```
 
 Visualizacion de atencion ST-GCN:
 
 ```powershell
-uv run python scripts/generate/visualizar_atencion_stgcn_mst.py
+uv run python src/scripts/generate/visualizar_atencion_stgcn_mst.py
 ```
 
 ## Lo que validan
