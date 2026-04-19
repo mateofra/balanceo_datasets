@@ -101,7 +101,7 @@ MANO_POSE_MODE="${MANO_POSE_MODE:-balanced}"
 MANO_GENERATE="${MANO_GENERATE:-1}"
 
 # ST-GCN: Landmarks sintéticos y secuencias temporales
-BALANCED_FOR_STGCN="${BALANCED_FOR_STGCN:-output/train_manifest_balanceado_freihand_hagrid.csv}"
+BALANCED_FOR_STGCN="${BALANCED_FOR_STGCN:-$BALANCED_MANIFEST}"
 LANDMARKS_DIR="${LANDMARKS_DIR:-data/processed/landmarks}"
 LANDMARKS_STGCN_MANIFEST="${LANDMARKS_STGCN_MANIFEST:-output/train_manifest_stgcn.csv}"
 SECUENCIAS_DIR="${SECUENCIAS_DIR:-data/processed/secuencias_stgcn}"
@@ -109,18 +109,18 @@ SECUENCIAS_MANIFEST="${SECUENCIAS_MANIFEST:-output/train_manifest_stgcn_secuenci
 STGCN_SEED="${STGCN_SEED:-42}"
 STGCN_FRAMES="${STGCN_FRAMES:-16}"
 
-log_step "1/8 Descarga de HaGRID"
+log_step "1/9 Descarga de HaGRID"
 uv run python src/datasets/setup/download_hagrid_kaggle.py \
   --dataset "$HAGRID_DATASET" \
   --download-dir "$HAGRID_DOWNLOAD_DIR" \
   --execute \
   --prepare-ann-subsample
 
-log_step "2/8 Descompresion de FreiHAND"
+log_step "2/9 Descompresion de FreiHAND"
 FREIHAND_ZIP_PATH="$(detect_freihand_zip)"
 ensure_freihand_extracted "$FREIHAND_ZIP_PATH"
 
-log_step "3/8 Auditoria MST real"
+log_step "3/9 Auditoria MST real"
 mkdir -p "$(dirname "$AUDIT_CSV")" "$(dirname "$AUDIT_SUMMARY")"
 uv run python src/datasets/setup/generar_mst_real_datasets.py \
   --freihand-rgb-dir "$FREIHAND_RGB_DIR" \
@@ -129,7 +129,7 @@ uv run python src/datasets/setup/generar_mst_real_datasets.py \
   --output-csv "$AUDIT_CSV" \
   --output-summary "$AUDIT_SUMMARY"
 
-log_step "4/8 Balanceo y generacion de solicitudes sinteticas"
+log_step "4/9 Balanceo y generacion de solicitudes sinteticas"
 mkdir -p "$(dirname "$REQUEST_MANIFEST")" "$(dirname "$GENERATED_MANIFEST")" "$(dirname "$ACCEPTED_MANIFEST")" "$(dirname "$GENERATION_SUMMARY")" "$(dirname "$QC_REPORT")" "$(dirname "$BALANCED_MANIFEST")" "$(dirname "$BALANCED_SUMMARY")"
 uv run python src/datasets/manos/build_synthetic_manifest.py \
   --real-csv "$AUDIT_CSV" \
@@ -137,7 +137,7 @@ uv run python src/datasets/manos/build_synthetic_manifest.py \
   --output-manifest "$REQUEST_MANIFEST" \
   --output-summary "$REQUEST_SUMMARY"
 
-log_step "5/7 Creacion y QC de sinteticos"
+log_step "5/9 Creacion y QC de sinteticos"
 uv run python src/datasets/manos/generate_synthetic_skin_tones.py \
   --request-manifest "$REQUEST_MANIFEST" \
   --output-images-dir "$SYNTHETIC_IMAGES_DIR" \
@@ -168,7 +168,7 @@ uv run python src/datasets/manos/build_mano_samples_manifest.py \
   --sample-dir "$MANO_SAMPLES_DIR" \
   --output-manifest "$MANO_SAMPLES_MANIFEST"
 
-log_step "5/8 Generacion de secuencias temporales MANO"
+log_step "6/9 Generacion de secuencias temporales MANO"
 mkdir -p "$MANO_SEQUENCES_DIR"
 uv run python src/datasets/manos/generar_secuencias_temporales.py \
   --input-dir "$MANO_SAMPLES_DIR" \
@@ -177,14 +177,14 @@ uv run python src/datasets/manos/generar_secuencias_temporales.py \
   --T "$STGCN_FRAMES" \
   --seed "$STGCN_SEED"
 
-log_step "6/8 Balance final por bloques MST"
+log_step "7/9 Balance final por bloques MST"
 uv run python src/datasets/manos/build_balanced_block_manifest.py \
   --input-csv "$AUDIT_CSV" \
   --input-csv "$MANO_SAMPLES_MANIFEST" \
   --output-manifest "$BALANCED_MANIFEST" \
   --output-summary "$BALANCED_SUMMARY"
 
-log_step "7/8 Generacion de landmarks sinteticos para ST-GCN"
+log_step "8/9 Generacion de landmarks sinteticos para ST-GCN"
 mkdir -p "$LANDMARKS_DIR"
 uv run python src/preprocessing/generate_synthetic_landmarks.py \
   --balanced-manifest "$BALANCED_FOR_STGCN" \
@@ -192,7 +192,7 @@ uv run python src/preprocessing/generate_synthetic_landmarks.py \
   --output-stgcn-csv "$LANDMARKS_STGCN_MANIFEST" \
   --seed "$STGCN_SEED"
 
-log_step "8/8 Generacion de secuencias temporales sinteticas"
+log_step "9/9 Generacion de secuencias temporales sinteticas"
 mkdir -p "$SECUENCIAS_DIR"
 uv run python src/preprocessing/generar_secuencias_sinteticas.py \
   --manifest "$LANDMARKS_STGCN_MANIFEST" \
