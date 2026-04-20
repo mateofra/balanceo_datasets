@@ -15,7 +15,7 @@ wheels/
 /stgcn/data/
 
 #secrets
-/secrets/*.zip
+/secrets/
 *.pth
 Zone.Identifier
 *.zip
