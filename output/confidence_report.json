@@ -1,0 +1,63 @@
+[
+    {
+        "clase": "rock",
+        "n_muestras": 628,
+        "confidence_media": 0.6637261146496816,
+        "confidence_std": 0.05553970219121837,
+        "pct_alta_confianza": 40.28662420382166,
+        "pct_baja_confianza": 0.0,
+        "muestra_ids_baja": [],
+        "status": "\u2705 OK"
+    },
+    {
+        "clase": "two_up",
+        "n_muestras": 471,
+        "confidence_media": 0.6500000000000002,
+        "confidence_std": 2.222806970756414e-16,
+        "pct_alta_confianza": 0.0,
+        "pct_baja_confianza": 0.0,
+        "muestra_ids_baja": [],
+        "status": "\u2705 OK"
+    },
+    {
+        "clase": "call",
+        "n_muestras": 85,
+        "confidence_media": 0.6799999999999999,
+        "confidence_std": 1.1168119431511587e-16,
+        "pct_alta_confianza": 0.0,
+        "pct_baja_confianza": 0.0,
+        "muestra_ids_baja": [],
+        "status": "\u2705 OK"
+    },
+    {
+        "clase": "like",
+        "n_muestras": 43,
+        "confidence_media": 0.6000000000000001,
+        "confidence_std": 1.123362215993712e-16,
+        "pct_alta_confianza": 0.0,
+        "pct_baja_confianza": 0.0,
+        "muestra_ids_baja": [],
+        "status": "\u26a0\ufe0f REVISAR (Media Baja)"
+    },
+    {
+        "clase": "bad_pose",
+        "n_muestras": 105,
+        "confidence_media": 0.5,
+        "confidence_std": 0.0,
+        "pct_alta_confianza": 0.0,
+        "pct_baja_confianza": 100.0,
+        "muestra_ids_baja": [
+            "sample_03847_MST_4",
+            "sample_00464_MST_1",
+            "sample_03054_MST_4",
+            "sample_07449_MST_8",
+            "sample_07493_MST_8",
+            "sample_00451_MST_1",
+            "sample_07388_MST_8",
+            "sample_08385_MST_9",
+            "sample_00791_MST_1",
+            "sample_09969_MST_10"
+        ],
+        "status": "\u26a0\ufe0f REVISAR (Media Baja)"
+    }
+]

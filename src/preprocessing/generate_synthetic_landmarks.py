@@ -195,6 +195,8 @@ def generate_stgcn_manifest(
     # Reordenar y seleccionar columnas
     output_columns = [
         "sample_id",
+        "path",
+        "image_path",
         "path_landmarks",
         "label",
         "condition",

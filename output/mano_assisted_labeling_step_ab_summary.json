@@ -1,0 +1,87 @@
+{
+  "total_samples": 10000,
+  "label_distribution": {
+    "ambiguous_cluster": 7682,
+    "fist": 1220,
+    "palm": 750,
+    "ambiguous": 261,
+    "three": 65,
+    "peace": 16,
+    "one": 5,
+    "rock": 1
+  },
+  "cluster_coherence": [
+    {
+      "cluster": 0,
+      "dominant_label": "palm",
+      "coherence": 0.9578544061302682,
+      "count": 783
+    },
+    {
+      "cluster": 1,
+      "dominant_label": "fist",
+      "coherence": 0.595460614152203,
+      "count": 749
+    },
+    {
+      "cluster": 2,
+      "dominant_label": "palm",
+      "coherence": 0.5014005602240896,
+      "count": 714
+    },
+    {
+      "cluster": 3,
+      "dominant_label": "palm",
+      "coherence": 0.39748953974895396,
+      "count": 717
+    },
+    {
+      "cluster": 4,
+      "dominant_label": "palm",
+      "coherence": 0.4838709677419355,
+      "count": 713
+    },
+    {
+      "cluster": 5,
+      "dominant_label": "three",
+      "coherence": 0.5913978494623656,
+      "count": 1302
+    },
+    {
+      "cluster": 6,
+      "dominant_label": "three",
+      "coherence": 0.39615846338535415,
+      "count": 833
+    },
+    {
+      "cluster": 7,
+      "dominant_label": "three",
+      "coherence": 0.366306027820711,
+      "count": 647
+    },
+    {
+      "cluster": 8,
+      "dominant_label": "fist",
+      "coherence": 0.8162100456621004,
+      "count": 876
+    },
+    {
+      "cluster": 9,
+      "dominant_label": "fist",
+      "coherence": 0.7663125948406677,
+      "count": 659
+    },
+    {
+      "cluster": 10,
+      "dominant_label": "three",
+      "coherence": 0.44360902255639095,
+      "count": 931
+    },
+    {
+      "cluster": 11,
+      "dominant_label": "three",
+      "coherence": 0.4851301115241636,
+      "count": 1076
+    }
+  ]
+}

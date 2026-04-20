@@ -75,44 +75,46 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def _collect_hagrid_ids(annotations_dir: Path) -> list[str]:
-    ids: list[str] = []
+def _collect_hagrid_data(annotations_dir: Path) -> dict[str, str]:
+    """Colecciona mapping id -> label de los JSON de anotaciones."""
+    data: dict[str, str] = {}
     if not annotations_dir.exists():
-        return ids
+        return data
 
     for ann_path in sorted(annotations_dir.glob("*.json")):
-        payload = json.loads(ann_path.read_text(encoding="utf-8"))
-        if not isinstance(payload, dict):
+        try:
+            payload = json.loads(ann_path.read_text(encoding="utf-8"))
+            if not isinstance(payload, dict):
+                continue
+            for image_id, info in payload.items():
+                sid = str(image_id).strip().lower()
+                if sid:
+                    # Usamos la primera etiqueta si hay varias
+                    label = info.get("labels", ["unknown"])[0]
+                    data[sid] = label
+        except Exception as e:
+            print(f"Error leyendo {ann_path}: {e}")
             continue
-        for image_id in payload.keys():
-            sid = str(image_id).strip().lower()
-            if sid:
-                ids.append(sid)
-
-    # Unicos preservando orden.
-    seen = set()
-    uniq: list[str] = []
-    for sid in ids:
-        if sid in seen:
-            continue
-        seen.add(sid)
-        uniq.append(sid)
-    return uniq
+    return data
 
 
-def _find_hagrid_image(sample_id: str, roots: list[Path]) -> Path | None:
-    exts = (".jpg", ".jpeg", ".png", ".webp")
+def _build_image_index(roots: list[Path]) -> dict[str, Path]:
+    """Crea un mapa de sample_id -> Path para busqueda instantanea."""
+    index: dict[str, Path] = {}
+    exts = {".jpg", ".jpeg", ".png", ".webp"}
+    print(f"Indexando imagenes en {len(roots)} directorios...")
     for root in roots:
         if not root.exists():
             continue
-        for ext in exts:
-            p = root / f"{sample_id}{ext}"
-            if p.exists():
-                return p
-            matches = list(root.rglob(f"{sample_id}{ext}"))
-            if matches:
-                return matches[0]
-    return None
+        # Busqueda eficiente de todos los archivos de imagen
+        for p in root.rglob("*"):
+            if p.suffix.lower() in exts:
+                # Usamos el stem (nombre sin extension) como ID
+                index[p.stem.lower()] = p
+    print(f"Indice construido: {len(index)} imagenes encontradas.")
+    return index
+
+
 
 
 def main() -> int:
@@ -157,6 +159,7 @@ def main() -> int:
                     "sample_id": sid,
                     "dataset": "freihand",
                     "mst_level": int(result["mst_level"]),
+                    "label": "hand",
                     "image_path": str(img_path),
                     "status": "ok",
                 }
@@ -182,14 +185,19 @@ def main() -> int:
 
     print("Procesando HaGRID...")
     hagrid_roots = [Path(p) for p in args.hagrid_image_roots]
-    hagrid_ids = _collect_hagrid_ids(args.hagrid_annotations_dir)
+    hagrid_index = _build_image_index(hagrid_roots)
+    
+    hagrid_data = _collect_hagrid_data(args.hagrid_annotations_dir)
+    hagrid_ids = list(hagrid_data.keys())
     if args.max_hagrid > 0:
         hagrid_ids = hagrid_ids[: args.max_hagrid]
 
     summary["hagrid"]["total"] = len(hagrid_ids)
 
     for i, sid in enumerate(hagrid_ids):
-        img_path = _find_hagrid_image(sid, hagrid_roots)
+        # Busqueda instantanea en el indice
+        img_path = hagrid_index.get(sid.lower())
+        
         if img_path is None:
             rows.append(
                 {
@@ -210,6 +218,7 @@ def main() -> int:
                     "sample_id": sid,
                     "dataset": "hagrid",
                     "mst_level": int(result["mst_level"]),
+                    "label": hagrid_data.get(sid.lower(), "unknown"),
                     "image_path": str(img_path),
                     "status": "ok",
                 }
@@ -236,7 +245,7 @@ def main() -> int:
     with output_csv.open("w", encoding="utf-8", newline="") as f:
         writer = csv.DictWriter(
             f,
-            fieldnames=["sample_id", "dataset", "mst_level", "image_path", "status"],
+            fieldnames=["sample_id", "dataset", "mst_level", "label", "image_path", "status"],
         )
         writer.writeheader()
         writer.writerows(rows)

@@ -1,0 +1,40 @@
+{
+  "inputs": {
+    "real_csv": [
+      "csv/mst_real_dataset.csv"
+    ],
+    "existing_accepted_csv": "datasets/synthetic_mst/metadata/manifest_synthetic_accepted_blocks_qc_adjusted.csv"
+  },
+  "acceptance_rate": 0.5,
+  "real_counts": {
+    "claro": 2198,
+    "medio": 46187,
+    "oscuro": 9822
+  },
+  "existing_accepted_counts": {
+    "claro": 0,
+    "medio": 0,
+    "oscuro": 0
+  },
+  "current_counts": {
+    "claro": 2198,
+    "medio": 46187,
+    "oscuro": 9822
+  },
+  "target_counts": {
+    "claro": 46187,
+    "medio": 46187,
+    "oscuro": 46187
+  },
+  "deficits": {
+    "claro": 43989,
+    "medio": 0,
+    "oscuro": 36365
+  },
+  "requested_counts": {
+    "claro": 87978,
+    "medio": 0,
+    "oscuro": 72730
+  },
+  "total_requests": 160708
+}

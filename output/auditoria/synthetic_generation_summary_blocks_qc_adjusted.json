@@ -1,10 +1,8 @@
 {
-  "request_manifest": "/home/mateo/PRACTICAS/balanceo_def/balanceo_datasets/datasets/synthetic_mst/metadata/manifest_synthetic_requests_blocks_qc_adjusted.csv",
-  "output_images_dir": "/home/mateo/PRACTICAS/balanceo_def/balanceo_datasets/datasets/synthetic_mst/images_blocks_qc_adjusted",
-  "output_manifest": "/home/mateo/PRACTICAS/balanceo_def/balanceo_datasets/datasets/synthetic_mst/metadata/manifest_synthetic_generated_blocks_qc_adjusted.csv",
-  "requested": 7375,
-  "generated": 7375,
-  "missing_sources": 0,
-  "failures": 0,
-  "strength": 0.85
+  "total_requests": 160708,
+  "generated": 160708,
+  "missing_source": 0,
+  "read_errors": 0,
+  "write_errors": 0,
+  "invalid_level": 0
 }

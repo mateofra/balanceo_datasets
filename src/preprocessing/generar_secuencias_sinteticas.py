@@ -127,14 +127,15 @@ def generar_secuencias_para_manifest(
             # Registrar en manifiesto
             secuencia_data.append({
                 'sample_id': sample_id,
+                'path': getattr(row, 'path', getattr(row, 'image_path', '')),
                 'path_secuencia': str(output_path.relative_to(output_dir.parent.parent)),
-                'path_landmarks': row.path_landmarks,
-                'label': row.label,
-                'condition': row.condition,
-                'dataset': row.dataset,
-                'mst': row.mst,
-                'mst_origin': row.mst_origin,
-                'split': row.split if hasattr(row, 'split') else 'train',
+                'path_landmarks': getattr(row, 'path_landmarks', ''),
+                'label': getattr(row, 'label', 'unknown'),
+                'condition': getattr(row, 'condition', 'sin_mst'),
+                'dataset': getattr(row, 'dataset', 'unknown'),
+                'mst': getattr(row, 'mst', ''),
+                'mst_origin': getattr(row, 'mst_origin', ''),
+                'split': getattr(row, 'split', 'train'),
             })
             
         except Exception as e:

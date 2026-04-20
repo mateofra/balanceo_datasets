@@ -174,18 +174,25 @@ class RealSTGCN(nn.Module):
             ]
         )
 
+        self.spatial_attn = SpatialAttention(128, adjacency.shape[0])
         self.classifier = nn.Linear(128, num_classes)
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
+    def forward(self, x: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
         # x: (B, C, T, V)
         b, c, t, v = x.shape
-        x = x.view(b, c * v, t)
+        x = x.reshape(b, c * v, t)
         x = self.data_bn(x)
-        x = x.view(b, c, t, v)
+        x = x.reshape(b, c, t, v)
 
         for block in self.blocks:
             x = block(x)
 
+        # x: (B, 128, T, V)
+        # Convert to (B, T, V, 128) for attention
+        x_attn = x.permute(0, 2, 3, 1)
+        x_attn, attn_weights = self.spatial_attn(x_attn)
+        
         # Global average pooling over temporal and joint dimensions.
-        x = x.mean(dim=-1).mean(dim=-1)
-        return self.classifier(x)
+        # x_attn is (B, T, V, 128)
+        x_pooled = x_attn.mean(dim=1).mean(dim=1)
+        return self.classifier(x_pooled), attn_weights

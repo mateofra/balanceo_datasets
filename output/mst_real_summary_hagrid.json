@@ -1,0 +1,14 @@
+{
+  "freihand": {
+    "total": 0,
+    "with_image": 0,
+    "classified": 0,
+    "errors": 0
+  },
+  "hagrid": {
+    "total": 509323,
+    "with_image": 31833,
+    "classified": 28463,
+    "errors": 3370
+  }
+}

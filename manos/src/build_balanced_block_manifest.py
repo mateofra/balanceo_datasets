@@ -19,6 +19,7 @@ class BlockRecord:
     mst_block: str
     source_kind: str
     input_csv: str
+    extra_data: dict[str, str]
 
 
 def _mst_block(mst_level: int) -> str:
@@ -63,7 +64,15 @@ def _load_records(csv_path: Path) -> list[BlockRecord]:
         dataset = str(row.get("dataset", "unknown")).strip() or "unknown"
         source_kind = str(row.get("source_kind", "real" if dataset in {"freihand", "hagrid"} else "synthetic")).strip()
         input_csv = str(row.get("input_csv", str(csv_path))).strip() or str(csv_path)
-        mst_level = _parse_mst_level(row)
+        try:
+            mst_level = _parse_mst_level(row)
+        except ValueError:
+            # Si no hay nivel MST valido, se omite la fila del balanceo
+            continue
+
+        # Capturar todas las demás columnas
+        reserved = {"sample_id", "image_id", "path", "image_path", "dataset", "source_kind", "input_csv", "mst_level", "mst", "mst_block_level", "mst_block"}
+        extra_data = {k: str(v).strip() for k, v in row.items() if k not in reserved}
 
         records.append(
             BlockRecord(
@@ -74,6 +83,7 @@ def _load_records(csv_path: Path) -> list[BlockRecord]:
                 mst_block=_mst_block(mst_level),
                 source_kind=source_kind,
                 input_csv=input_csv,
+                extra_data=extra_data,
             )
         )
 
@@ -117,31 +127,36 @@ def build_balanced_block_manifest(
     records: list[BlockRecord] = []
     for csv_path in input_csvs:
         if not csv_path.exists():
-            raise FileNotFoundError(f"No existe el CSV de entrada: {csv_path}")
+            raise FileNotFoundError(f"No existe el CSV de entrada: {csv_path} (CWD: {Path.cwd()}, Abs: {csv_path.resolve()})")
         records.extend(_load_records(csv_path))
 
     selected, selected_counts = _balance_blocks(records, seed)
     original_counts = Counter(record.mst_block for record in records)
 
+    # Determinar todos los fieldnames (base + extras de todos los registros)
+    all_extra_keys = set()
+    for r in selected:
+        all_extra_keys.update(r.extra_data.keys())
+    
+    base_fields = ["sample_id", "path", "dataset", "mst_level", "mst_block", "source_kind", "input_csv"]
+    fieldnames = base_fields + sorted(list(all_extra_keys))
+
     output_manifest.parent.mkdir(parents=True, exist_ok=True)
     with output_manifest.open("w", encoding="utf-8", newline="") as f:
-        writer = csv.DictWriter(
-            f,
-            fieldnames=["sample_id", "path", "dataset", "mst_level", "mst_block", "source_kind", "input_csv"],
-        )
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
         for record in selected:
-            writer.writerow(
-                {
-                    "sample_id": record.sample_id,
-                    "path": record.path,
-                    "dataset": record.dataset,
-                    "mst_level": record.mst_level,
-                    "mst_block": record.mst_block,
-                    "source_kind": record.source_kind,
-                    "input_csv": record.input_csv,
-                }
-            )
+            row_dict = {
+                "sample_id": record.sample_id,
+                "path": record.path,
+                "dataset": record.dataset,
+                "mst_level": record.mst_level,
+                "mst_block": record.mst_block,
+                "source_kind": record.source_kind,
+                "input_csv": record.input_csv,
+            }
+            row_dict.update(record.extra_data)
+            writer.writerow(row_dict)
 
     summary = {
         "inputs": [str(path.resolve()) for path in input_csvs],
@@ -188,6 +203,7 @@ def main(argv: Iterable[str] | None = None) -> None:
     )
     args = parser.parse_args(list(argv) if argv is not None else None)
 
+    print(f"[balanced-blocks] Iniciando balanceo (v1.1 - try/except fix)...")
     build_balanced_block_manifest(args.input_csv, args.output_manifest, args.output_summary, args.seed)
     print(f"[balanced-blocks] Manifest guardado en {args.output_manifest}")
 
