@@ -1,0 +1,25 @@
+📡 Usando dispositivo: cpu
+📦 Dataset: 4071 train | 718 val
+🏷️ Clases (7): ['fist', 'four', 'like', 'one', 'palm', 'peace', 'three']
+🔍 Fuentes en Validación: {'heuristic_v4': 403, 'original': 298, 'heuristic_v3': 17}
+/home/mateo/cosas_de_clase/4/PRACTICAS/aaa/balanceo_datasets/.venv/lib/python3.13/site-packages/torch/utils/data/sampler.py:264: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+  weights_tensor = torch.as_tensor(weights, dtype=torch.double)
+Epoch 01 | Train: 16.97% | Val Global: 18.52% | Val REAL: 14.43% | Val MANO: 47.06%
+  ⭐ Guardado mejor modelo (Acc Real: 14.43%)
+Epoch 02 | Train: 19.18% | Val Global: 19.36% | Val REAL: 14.09% | Val MANO: 17.65%
+Epoch 03 | Train: 20.17% | Val Global: 15.32% | Val REAL: 10.40% | Val MANO: 35.29%
+Epoch 04 | Train: 21.27% | Val Global: 13.93% | Val REAL: 11.41% | Val MANO: 23.53%
+Epoch 05 | Train: 21.08% | Val Global: 17.27% | Val REAL: 14.09% | Val MANO: 11.76%
+Epoch 06 | Train: 21.86% | Val Global: 14.76% | Val REAL: 13.09% | Val MANO: 23.53%
+Epoch 07 | Train: 21.96% | Val Global: 16.71% | Val REAL: 13.09% | Val MANO: 17.65%
+Epoch 08 | Train: 22.77% | Val Global: 18.11% | Val REAL: 10.74% | Val MANO: 41.18%
+Epoch 09 | Train: 23.80% | Val Global: 13.93% | Val REAL: 12.42% | Val MANO: 23.53%
+Epoch 10 | Train: 24.15% | Val Global: 13.09% | Val REAL: 14.09% | Val MANO: 17.65%
+Epoch 11 | Train: 23.34% | Val Global: 15.32% | Val REAL: 15.44% | Val MANO: 23.53%
+  ⭐ Guardado mejor modelo (Acc Real: 15.44%)
+Epoch 12 | Train: 23.83% | Val Global: 16.85% | Val REAL: 12.42% | Val MANO: 29.41%
+Epoch 13 | Train: 24.61% | Val Global: 16.02% | Val REAL: 15.10% | Val MANO: 17.65%
+Epoch 14 | Train: 24.20% | Val Global: 13.93% | Val REAL: 14.09% | Val MANO: 23.53%
+Epoch 15 | Train: 25.45% | Val Global: 14.48% | Val REAL: 12.42% | Val MANO: 17.65%
+Epoch 16 | Train: 24.37% | Val Global: 13.93% | Val REAL: 15.44% | Val MANO:  5.88%
+Epoch 17 | Train: 25.67% | Val Global: 13.09% | Val REAL: 14.77% | Val MANO: 17.65%

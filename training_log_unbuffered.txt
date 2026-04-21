@@ -1,0 +1,35 @@
+📡 Usando dispositivo: cpu
+📦 Dataset: 13769 train | 2430 val
+🏷️ Clases (19): ['call', 'dislike', 'fist', 'four', 'hand', 'like', 'mute', 'ok', 'one', 'palm', 'peace', 'peace_inverted', 'rock', 'stop', 'stop_inverted', 'three', 'three2', 'two_up', 'two_up_inverted']
+🔍 Fuentes en Validación: {'original': 1828, 'heuristic_v3': 435, 'heuristic_v2': 167}
+/home/mateo/cosas_de_clase/4/PRACTICAS/aaa/balanceo_datasets/.venv/lib/python3.13/site-packages/torch/utils/data/sampler.py:264: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+  weights_tensor = torch.as_tensor(weights, dtype=torch.double)
+Epoch 01 | Train: 96.01% | Val Global: 100.00% | Val REAL:  0.00% | Val Heur:  0.00%
+Epoch 02 | Train: 100.00% | Val Global: 100.00% | Val REAL:  0.00% | Val Heur:  0.00%
+Epoch 03 | Train: 100.00% | Val Global: 100.00% | Val REAL:  0.00% | Val Heur:  0.00%
+Epoch 04 | Train: 100.00% | Val Global: 100.00% | Val REAL:  0.00% | Val Heur:  0.00%
+Epoch 05 | Train: 100.00% | Val Global: 100.00% | Val REAL:  0.00% | Val Heur:  0.00%
+Epoch 06 | Train: 100.00% | Val Global: 100.00% | Val REAL:  0.00% | Val Heur:  0.00%
+Epoch 07 | Train: 100.00% | Val Global: 100.00% | Val REAL:  0.00% | Val Heur:  0.00%
+Epoch 08 | Train: 100.00% | Val Global: 100.00% | Val REAL:  0.00% | Val Heur:  0.00%
+Epoch 09 | Train: 100.00% | Val Global: 100.00% | Val REAL:  0.00% | Val Heur:  0.00%
+Epoch 10 | Train: 100.00% | Val Global: 100.00% | Val REAL:  0.00% | Val Heur:  0.00%
+🛑 Early stopping disparado en época 10
+
+📊 Generando Matriz de Confusión Final (Subconjunto REAL)...
+Traceback (most recent call last):
+  File "/home/mateo/cosas_de_clase/4/PRACTICAS/aaa/balanceo_datasets/scratch/train_stgcn_final.py", line 235, in <module>
+    train()
+    ~~~~~^^
+  File "/home/mateo/cosas_de_clase/4/PRACTICAS/aaa/balanceo_datasets/scratch/train_stgcn_final.py", line 207, in train
+    model.load_state_dict(torch.load("models/best_stgcn_real_val.pt"))
+                          ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/mateo/cosas_de_clase/4/PRACTICAS/aaa/balanceo_datasets/.venv/lib/python3.13/site-packages/torch/serialization.py", line 1530, in load
+    with _open_file_like(f, "rb") as opened_file:
+         ~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/home/mateo/cosas_de_clase/4/PRACTICAS/aaa/balanceo_datasets/.venv/lib/python3.13/site-packages/torch/serialization.py", line 795, in _open_file_like
+    return _open_file(name_or_buffer, mode)
+  File "/home/mateo/cosas_de_clase/4/PRACTICAS/aaa/balanceo_datasets/.venv/lib/python3.13/site-packages/torch/serialization.py", line 776, in __init__
+    super().__init__(open(name, mode))  # noqa: SIM115
+                     ~~~~^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'models/best_stgcn_real_val.pt'

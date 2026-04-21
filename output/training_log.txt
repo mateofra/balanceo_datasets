@@ -10,3 +10,41 @@ Epoch [1/15] - Loss: 3.0459 - Val Acc: 21.82%
   --> Guardado mejor modelo (21.82%)
 Epoch [2/15] - Loss: 3.0447 - Val Acc: 23.47%
   --> Guardado mejor modelo (23.47%)
+Epoch [3/15] - Loss: 3.0433 - Val Acc: 16.47%
+Epoch [4/15] - Loss: 3.0428 - Val Acc: 11.09%
+Epoch [5/15] - Loss: 3.0425 - Val Acc: 13.17%
+Epoch [6/15] - Loss: 3.0426 - Val Acc: 7.49%
+Epoch [7/15] - Loss: 3.0425 - Val Acc: 7.19%
+Epoch [8/15] - Loss: 3.0426 - Val Acc: 5.84%
+Epoch [9/15] - Loss: 3.0416 - Val Acc: 8.25%
+Epoch [10/15] - Loss: 3.0409 - Val Acc: 8.79%
+Epoch [11/15] - Loss: 3.0402 - Val Acc: 12.57%
+Epoch [12/15] - Loss: 3.0401 - Val Acc: 18.79%
+Epoch [13/15] - Loss: 3.0409 - Val Acc: 10.92%
+Epoch [14/15] - Loss: 3.0382 - Val Acc: 4.76%
+Epoch [15/15] - Loss: 3.0371 - Val Acc: 6.68%
+--- Iniciando demo con 5 imágenes --- 
+
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1776703725.915949  247398 gl_context_egl.cc:85] Successfully initialized EGL. Major : 1 Minor: 5
+I0000 00:00:1776703725.922920  247411 gl_context.cc:385] GL version: 3.2 (OpenGL ES 3.2 Mesa 25.0.7-2), renderer: Mesa Intel(R) Iris(R) Xe Graphics (TGL GT2)
+INFO: Created TensorFlow Lite XNNPACK delegate for CPU.
+W0000 00:00:1776703725.968780  247399 inference_feedback_manager.cc:114] Feedback manager requires a model with a single signature inference. Disabling support for feedback tensors.
+W0000 00:00:1776703726.011291  247402 inference_feedback_manager.cc:114] Feedback manager requires a model with a single signature inference. Disabling support for feedback tensors.
+W0000 00:00:1776703726.074593  247403 landmark_projection_calculator.cc:78] Using NORM_RECT without IMAGE_DIMENSIONS is only supported for the square ROI. Provide IMAGE_DIMENSIONS or use PROJECTION_MATRIX.
+I0000 00:00:1776703749.696714  247547 gl_context_egl.cc:85] Successfully initialized EGL. Major : 1 Minor: 5
+I0000 00:00:1776703749.698861  247558 gl_context.cc:385] GL version: 3.2 (OpenGL ES 3.2 Mesa 25.0.7-2), renderer: Mesa Intel(R) Iris(R) Xe Graphics (TGL GT2)
+W0000 00:00:1776703749.718060  247550 inference_feedback_manager.cc:114] Feedback manager requires a model with a single signature inference. Disabling support for feedback tensors.
+W0000 00:00:1776703749.725174  247555 inference_feedback_manager.cc:114] Feedback manager requires a model with a single signature inference. Disabling support for feedback tensors.
+I0000 00:00:1776703751.116073  247564 gl_context_egl.cc:85] Successfully initialized EGL. Major : 1 Minor: 5
+I0000 00:00:1776703751.118385  247575 gl_context.cc:385] GL version: 3.2 (OpenGL ES 3.2 Mesa 25.0.7-2), renderer: Mesa Intel(R) Iris(R) Xe Graphics (TGL GT2)
+W0000 00:00:1776703751.139043  247569 inference_feedback_manager.cc:114] Feedback manager requires a model with a single signature inference. Disabling support for feedback tensors.
+W0000 00:00:1776703751.151993  247570 inference_feedback_manager.cc:114] Feedback manager requires a model with a single signature inference. Disabling support for feedback tensors.
+I0000 00:00:1776703752.443911  247577 gl_context_egl.cc:85] Successfully initialized EGL. Major : 1 Minor: 5
+I0000 00:00:1776703752.445448  247588 gl_context.cc:385] GL version: 3.2 (OpenGL ES 3.2 Mesa 25.0.7-2), renderer: Mesa Intel(R) Iris(R) Xe Graphics (TGL GT2)
+W0000 00:00:1776703752.466878  247578 inference_feedback_manager.cc:114] Feedback manager requires a model with a single signature inference. Disabling support for feedback tensors.
+W0000 00:00:1776703752.475092  247582 inference_feedback_manager.cc:114] Feedback manager requires a model with a single signature inference. Disabling support for feedback tensors.
+I0000 00:00:1776703753.694669  247609 gl_context_egl.cc:85] Successfully initialized EGL. Major : 1 Minor: 5
+I0000 00:00:1776703753.696313  247620 gl_context.cc:385] GL version: 3.2 (OpenGL ES 3.2 Mesa 25.0.7-2), renderer: Mesa Intel(R) Iris(R) Xe Graphics (TGL GT2)
+W0000 00:00:1776703753.718377  247610 inference_feedback_manager.cc:114] Feedback manager requires a model with a single signature inference. Disabling support for feedback tensors.
+W0000 00:00:1776703753.728551  247613 inference_feedback_manager.cc:114] Feedback manager requires a model with a single signature inference. Disabling support for feedback tensors.

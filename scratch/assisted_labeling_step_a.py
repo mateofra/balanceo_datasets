@@ -71,12 +71,18 @@ def calculate_advanced_features(lms):
     dist_palm_width = np.linalg.norm(lms[17] - lms[5])
     palm_arc = dist_palm_width / scale
 
+    # 5. Elevación del pulgar relativa a nudillos (Y-axis)
+    # En coordenadas MediaPipe, Y disminuye hacia arriba.
+    knuckles_y = np.mean([lms[5,1], lms[9,1], lms[13,1], lms[17,1]])
+    thumb_up_score = knuckles_y - lms[4,1] # Positivo si el pulgar está arriba
+
     return {
         'angles_prox': angles_prox,
         'angles_dist': angles_dist,
         'dist_ok': dist_ok,
         'thumb_abduction': thumb_abduction,
-        'palm_arc': palm_arc
+        'palm_arc': palm_arc,
+        'thumb_up_score': thumb_up_score
     }
 
 def suggest_refined_label(f):
@@ -88,16 +94,24 @@ def suggest_refined_label(f):
     is_bent = [a > 35 for a in prox]
     is_very_bent = [a > 60 for a in prox]
     
+    # 1. Preparar discriminadores específicos
+    thumb_is_up = f.get('thumb_up_score', 0) > 0.05
+    thumb_is_bent = prox[0] > 45
+
     # CLASES
     
-    # FIST: Todos los dedos muy doblados
-    if all(is_very_bent[1:]):
+    # LIKE: Pulgar arriba y resto muy cerrados
+    if thumb_is_up and all(is_very_bent[1:]):
+        return "like", 0.98
+
+    # FIST: Todos los dedos (incluido pulgar) muy doblados
+    if all(is_very_bent[1:]) and thumb_is_bent:
         return "fist", 0.95
         
     # OK: Pulgar e índice se tocan, otros estirados
     if f['dist_ok'] < 0.4 and not any(is_bent[2:]):
         return "ok", 0.9
-        
+
     # PEACE: Índice y medio estirados, otros doblados
     if not is_bent[1] and not is_bent[2] and all(is_bent[3:]):
         return "peace", 0.85
@@ -105,10 +119,6 @@ def suggest_refined_label(f):
     # ONE: Solo índice estirado
     if not is_bent[1] and all(is_bent[2:]):
         return "one", 0.85
-        
-    # ROCK: Índice y meñique estirados
-    if not is_bent[1] and is_bent[2] and is_bent[3] and not is_bent[4]:
-        return "rock", 0.8
         
     # PALM: Todos estirados
     if not any(is_bent[1:]):

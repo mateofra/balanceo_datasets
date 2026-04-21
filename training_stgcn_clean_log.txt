@@ -1,0 +1,55 @@
+📡 Usando dispositivo: cpu
+📦 Dataset: 4060 train | 717 val
+🏷️ Clases (7): ['fist', 'four', 'like', 'one', 'palm', 'peace', 'three']
+🔍 Fuentes en Validación: {'heuristic_v3': 409, 'original': 308}
+/home/mateo/cosas_de_clase/4/PRACTICAS/aaa/balanceo_datasets/.venv/lib/python3.13/site-packages/torch/utils/data/sampler.py:264: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)
+  weights_tensor = torch.as_tensor(weights, dtype=torch.double)
+Epoch 01 | Train: 16.95% | Val Global: 18.83% | Val REAL: 10.71% | Val MANO: 24.94%
+  ⭐ Guardado mejor modelo (Acc Real: 10.71%)
+Epoch 02 | Train: 18.72% | Val Global: 16.32% | Val REAL: 11.69% | Val MANO: 19.80%
+  ⭐ Guardado mejor modelo (Acc Real: 11.69%)
+Epoch 03 | Train: 19.36% | Val Global: 16.88% | Val REAL: 12.99% | Val MANO: 19.80%
+  ⭐ Guardado mejor modelo (Acc Real: 12.99%)
+Epoch 04 | Train: 20.39% | Val Global: 20.92% | Val REAL: 13.64% | Val MANO: 26.41%
+  ⭐ Guardado mejor modelo (Acc Real: 13.64%)
+Epoch 05 | Train: 21.58% | Val Global: 11.85% | Val REAL: 12.66% | Val MANO: 11.25%
+Epoch 06 | Train: 20.94% | Val Global: 14.37% | Val REAL: 13.96% | Val MANO: 14.67%
+  ⭐ Guardado mejor modelo (Acc Real: 13.96%)
+Epoch 07 | Train: 22.14% | Val Global: 17.15% | Val REAL: 13.31% | Val MANO: 20.05%
+Epoch 08 | Train: 22.61% | Val Global: 11.99% | Val REAL: 13.64% | Val MANO: 10.76%
+Epoch 09 | Train: 22.19% | Val Global: 22.59% | Val REAL: 15.91% | Val MANO: 27.63%
+  ⭐ Guardado mejor modelo (Acc Real: 15.91%)
+Epoch 10 | Train: 23.57% | Val Global: 15.06% | Val REAL: 13.96% | Val MANO: 15.89%
+Epoch 11 | Train: 23.28% | Val Global: 14.50% | Val REAL: 13.64% | Val MANO: 15.16%
+Epoch 12 | Train: 23.18% | Val Global: 20.08% | Val REAL: 15.26% | Val MANO: 23.72%
+Epoch 13 | Train: 23.97% | Val Global: 13.53% | Val REAL: 13.96% | Val MANO: 13.20%
+Epoch 14 | Train: 24.11% | Val Global: 12.27% | Val REAL: 12.99% | Val MANO: 11.74%
+Epoch 15 | Train: 24.78% | Val Global: 15.62% | Val REAL: 13.31% | Val MANO: 17.36%
+Epoch 16 | Train: 23.33% | Val Global: 13.53% | Val REAL: 11.69% | Val MANO: 14.91%
+Epoch 17 | Train: 25.81% | Val Global:  9.48% | Val REAL: 13.64% | Val MANO:  6.36%
+Epoch 18 | Train: 25.62% | Val Global:  9.34% | Val REAL: 16.56% | Val MANO:  3.91%
+  ⭐ Guardado mejor modelo (Acc Real: 16.56%)
+Epoch 19 | Train: 27.56% | Val Global: 12.13% | Val REAL: 14.94% | Val MANO: 10.02%
+Epoch 20 | Train: 25.74% | Val Global: 12.83% | Val REAL: 17.86% | Val MANO:  9.05%
+  ⭐ Guardado mejor modelo (Acc Real: 17.86%)
+Epoch 21 | Train: 27.46% | Val Global: 15.06% | Val REAL: 15.91% | Val MANO: 14.43%
+Epoch 22 | Train: 27.02% | Val Global: 13.39% | Val REAL: 12.99% | Val MANO: 13.69%
+Epoch 23 | Train: 28.05% | Val Global: 14.78% | Val REAL: 13.96% | Val MANO: 15.40%
+Epoch 24 | Train: 28.74% | Val Global: 11.16% | Val REAL: 15.26% | Val MANO:  8.07%
+Epoch 25 | Train: 27.24% | Val Global: 14.92% | Val REAL: 12.01% | Val MANO: 17.11%
+Epoch 26 | Train: 28.97% | Val Global:  9.90% | Val REAL: 11.04% | Val MANO:  9.05%
+Epoch 27 | Train: 28.57% | Val Global: 13.39% | Val REAL: 12.66% | Val MANO: 13.94%
+Epoch 28 | Train: 29.24% | Val Global: 10.74% | Val REAL: 12.01% | Val MANO:  9.78%
+Epoch 29 | Train: 29.46% | Val Global: 10.46% | Val REAL: 14.61% | Val MANO:  7.33%
+Epoch 30 | Train: 30.57% | Val Global: 11.44% | Val REAL: 12.34% | Val MANO: 10.76%
+Epoch 31 | Train: 29.46% | Val Global:  9.90% | Val REAL: 14.61% | Val MANO:  6.36%
+Epoch 32 | Train: 30.71% | Val Global: 10.46% | Val REAL: 12.99% | Val MANO:  8.56%
+Epoch 33 | Train: 30.79% | Val Global:  8.79% | Val REAL: 11.36% | Val MANO:  6.85%
+Epoch 34 | Train: 31.13% | Val Global:  9.21% | Val REAL: 12.99% | Val MANO:  6.36%
+Epoch 35 | Train: 31.45% | Val Global: 10.04% | Val REAL: 11.04% | Val MANO:  9.29%
+🛑 Early stopping disparado en época 35
+
+📊 Generando Matriz de Confusión Final (Subconjunto REAL)...
+📈 Matriz de confusión guardada en output/confusion_matrix_stgcn.png
+
+✅ Entrenamiento Finalizado. Mejor Accuracy Real: 17.86%
